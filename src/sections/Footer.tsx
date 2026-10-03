@@ -1,10 +1,10 @@
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { contact, footer, forms, isTaxExempt, links, nav, site, taxExempt } from "../content";
 import { Emblem } from "../components/Brand";
 import { Icon } from "../components/Icon";
 import { useScrollTo } from "../components/SmoothScroll";
 import { useToast } from "../components/Toast";
-import { isDraft, T, textOf } from "../lib/draft";
+import { isDraft, linkMissing, T, textOf } from "../lib/draft";
 import { gsap, prefersReducedMotion, ScrollTrigger, SplitText, useGSAP } from "../lib/gsap";
 import { onEnterOnce } from "../lib/reveal";
 
@@ -17,14 +17,19 @@ export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
     (_ctx, contextSafe) => {
       if (prefersReducedMotion()) return;
       gsap.set(mark.current, { autoAlpha: 0 });
-      const play = contextSafe!(() =>
-        document.fonts.ready.then(() => {
-          const split = SplitText.create(mark.current, { type: "chars", mask: "chars" });
-          gsap.set(mark.current, { autoAlpha: 1 });
-          gsap.from(split.chars, { yPercent: 105, duration: 1.4, stagger: 0.035, ease: "expo.out" });
-        }),
-      );
-      return onEnterOnce(mark.current!, play, "0px 0px -5% 0px");
+      // The split waits for the fonts, so it runs later: wrapped to stay revertible,
+      // and skipped if the footer is gone by then.
+      let alive = true;
+      const play = contextSafe!(() => {
+        const split = SplitText.create(mark.current, { type: "chars", mask: "chars" });
+        gsap.set(mark.current, { autoAlpha: 1 });
+        gsap.from(split.chars, { yPercent: 105, duration: 1.4, stagger: 0.035, ease: "expo.out", onComplete: () => split.revert() });
+      });
+      const stop = onEnterOnce(mark.current!, () => void document.fonts.ready.then(() => alive && play()), "0px 0px -5% 0px");
+      return () => {
+        alive = false;
+        stop();
+      };
     },
     { scope: root },
   );
@@ -68,7 +73,7 @@ export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
             <p className="mt-4 text-sm leading-relaxed">{footer.privacy}</p>
             <div className="mt-6 flex gap-2">
               {/* Unset profiles are hidden on the live site (shown highlighted in draft mode). */}
-              {(["instagram", "facebook", "youtube"] as const).filter((s) => site.draftMode || !isDraft(links[s])).map((s) => (
+              {(["instagram", "facebook", "youtube"] as const).filter((s) => (site.draftMode && isDraft(links[s])) || !linkMissing(links[s])).map((s) => (
                 <a
                   key={s}
                   href={textOf(links[s])}
@@ -99,11 +104,11 @@ export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
         <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-3 px-5 py-6 text-sm text-cream/55">
           <p>
             © {new Date().getFullYear()} {site.name} {site.kind}. All rights reserved.
-            <button type="button" onClick={openPrivacy} className="ml-4 underline-offset-4 transition-colors hover:text-gold-soft hover:underline">
+            <button type="button" onClick={openPrivacy} className="-my-2 ml-4 inline-block py-2 underline-offset-4 transition-colors hover:text-gold-soft hover:underline">
               Privacy
             </button>
           </p>
-          <a href="#top" className="inline-flex items-center gap-1.5 transition-colors hover:text-gold-soft">
+          <a href="#top" className="-my-2 inline-flex items-center gap-1.5 py-2 transition-colors hover:text-gold-soft">
             Back to top <Icon name="arrowUp" className="size-4" strokeWidth={2} />
           </a>
         </div>
@@ -124,6 +129,11 @@ function FooterCol({ title, children }: { title: string; children: React.ReactNo
 function Newsletter() {
   const toast = useToast();
   const [done, setDone] = useState(false);
+  const thanks = useRef<HTMLParagraphElement>(null);
+  // The form (and the focused button) disappears on success, so bring focus to the message.
+  useEffect(() => {
+    if (done) thanks.current?.focus();
+  }, [done]);
   if (!forms.newsletterEndpoint && !site.draftMode) return null;
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -151,11 +161,14 @@ function Newsletter() {
         <h2 className="mt-4 text-[clamp(2rem,2.4vw+1rem,3.2rem)] text-cream">News from the home, a few times a year.</h2>
       </div>
       {done ? (
-        <p className="flex items-center gap-3 text-lg text-cream">
+        <p ref={thanks} tabIndex={-1} role="status" className="flex items-center gap-3 text-lg text-cream outline-none">
           <Icon name="check" className="size-6 text-gold" strokeWidth={2.4} /> You're on the list. Thank you!
         </p>
       ) : (
-        <form onSubmit={submit} className="flex flex-col gap-3 rounded-full sm:flex-row sm:border sm:border-cream/15 sm:bg-cream/5 sm:p-1.5">
+        <form
+          onSubmit={submit}
+          className="flex flex-col gap-3 rounded-full transition-[border-color,box-shadow] duration-200 sm:flex-row sm:border sm:border-cream/15 sm:bg-cream/5 sm:p-1.5 sm:focus-within:border-gold sm:focus-within:shadow-[0_0_0_4px_rgb(232_176_74/0.2)]"
+        >
           <label htmlFor="nl-email" className="sr-only">
             Email address
           </label>

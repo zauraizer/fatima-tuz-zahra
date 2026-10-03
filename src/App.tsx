@@ -55,7 +55,8 @@ function Site() {
   useEffect(() => {
     const id = window.location.hash.slice(1);
     if (!id) return;
-    window.setTimeout(() => scrollTo(id), 400);
+    const t = window.setTimeout(() => scrollTo(id), 400);
+    return () => window.clearTimeout(t);
   }, [scrollTo]);
 
   const toDonate = useCallback(() => scrollTo("donate-widget"), [scrollTo]);

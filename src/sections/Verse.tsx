@@ -17,14 +17,14 @@ export function Verse() {
     (_ctx, contextSafe) => {
       if (prefersReducedMotion()) return;
       const q = gsap.utils.selector(root);
-      gsap.set(q(".verse-word"), { autoAlpha: 0, y: 24, filter: "blur(10px)" });
+      gsap.set(q(".verse-word"), { opacity: 0, y: 24, filter: "blur(10px)" });
       gsap.set(q(".verse-star"), { autoAlpha: 0, scale: 0.4, rotate: -90 });
 
       const play = contextSafe!(() => {
         gsap
           .timeline()
           .to(q(".verse-star"), { autoAlpha: 1, scale: 1, rotate: 0, duration: 1.4 })
-          .to(q(".verse-word"), { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 1.3, stagger: 0.14, ease: "power3.out" }, 0.2);
+          .to(q(".verse-word"), { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.3, stagger: 0.14, ease: "power3.out" }, 0.2);
       });
       const stop = onEnterOnce(q(".verse-ar")[0], play, "0px 0px -15% 0px");
 

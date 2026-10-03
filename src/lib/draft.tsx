@@ -3,6 +3,8 @@ import { site, type Num, type Rich, type Text } from "../content";
 
 export const isDraft = (v: Text): boolean => typeof v !== "string";
 export const textOf = (v: Text): string => (typeof v === "string" ? v : v.value);
+/** True while a link is still a placeholder, empty, or not a real web address. */
+export const linkMissing = (v: Text): boolean => isDraft(v) || !/^https?:\/\/[^/\s]+\.[^\s]+$/.test(textOf(v).trim());
 
 /** Wrap ﷺ so it renders in the Arabic font at a legible size. */
 function withHonorifics(s: string) {

@@ -85,7 +85,7 @@ export function Care() {
   const reduced = useReducedMotion();
   const lenis = useLenis();
   const [playing, setPlaying] = useState(true);
-  const [open, setOpen] = useState<{ n: number; source: HTMLElement } | null>(null);
+  const [open, setOpen] = useState<{ n: number; source: HTMLElement; returnTo: HTMLElement | null } | null>(null);
   const playingRef = useRef(playing);
   const selectedRef = useRef<number | null>(null);
   playingRef.current = playing;
@@ -226,9 +226,11 @@ export function Care() {
   );
 
   // ---- Popping a card out ----
+  // It grows out of the card that was clicked (which may be one of the looping copies),
+  // but focus always returns to the original card, since only those are in the tab order.
   const openCard = (n: number, source: HTMLElement) => {
     if (engine.current?.justDragged()) return;
-    setOpen({ n, source });
+    setOpen({ n, source, returnTo: track.current?.querySelector<HTMLElement>(`[data-card-open="${n}"]`) ?? null });
   };
 
   return (
@@ -244,7 +246,6 @@ export function Care() {
             <button
               type="button"
               onClick={() => setPlaying((p) => !p)}
-              aria-pressed={!playing}
               data-pop="1.08"
               className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-line bg-cream px-4 py-2 text-sm font-semibold text-forest transition-colors duration-300 hover:border-forest"
             >
@@ -278,19 +279,7 @@ export function Care() {
               >
                   <SpotlightCard
                     data-pop="1.03"
-                    role={reduced ? undefined : "button"}
-                    tabIndex={reduced ? undefined : copy ? -1 : 0}
-                    aria-haspopup={reduced ? undefined : "dialog"}
-                    aria-label={reduced ? undefined : `Open ${item.title}`}
-                    onClick={(e) => !reduced && openCard(n, e.currentTarget)}
-                    onKeyDown={(e) => {
-                      if (reduced || (e.key !== "Enter" && e.key !== " ")) return;
-                      e.preventDefault();
-                      openCard(n, e.currentTarget);
-                    }}
-                    className={`flex h-[400px] w-[min(80vw,360px)] flex-col rounded-[2rem] p-8 shadow-lift transition-shadow duration-500 hover:shadow-pop md:h-[440px] md:w-[380px] ${
-                      reduced ? "" : "cursor-pointer"
-                    } ${t.card}`}
+                    className={`flex h-[400px] w-[min(80vw,360px)] flex-col rounded-[2rem] p-8 shadow-lift transition-shadow duration-500 hover:shadow-pop md:h-[440px] md:w-[380px] ${t.card}`}
                   >
                     {t.stars && <div className="bg-stars-light pointer-events-none absolute inset-0 opacity-[0.06]" />}
                     <span
@@ -306,6 +295,18 @@ export function Care() {
                       <h3 className={`text-[1.9rem] leading-tight ${t.title}`}>{item.title}</h3>
                       <p className={`mt-3 text-[1.03rem] leading-relaxed ${t.body}`}>{item.body}</p>
                     </div>
+                    {/* The whole card is clickable, while its heading and text stay readable on their own. */}
+                    {!reduced && (
+                      <button
+                        type="button"
+                        tabIndex={copy ? -1 : undefined}
+                        data-card-open={copy ? undefined : n}
+                        aria-haspopup="dialog"
+                        aria-label={`Read more about ${item.title}`}
+                        onClick={(e) => openCard(n, e.currentTarget.closest("article")!)}
+                        className={`absolute inset-0 z-10 cursor-pointer rounded-[2rem] focus-visible:outline-current focus-visible:outline-offset-[-7px] ${t.title}`}
+                      />
+                    )}
                   </SpotlightCard>
               </li>
             );
@@ -313,7 +314,7 @@ export function Care() {
         </ul>
       </div>
 
-      {open && <CareDetail key={open.n} n={open.n} source={open.source} onClosed={() => setOpen(null)} />}
+      {open && <CareDetail key={open.n} n={open.n} source={open.source} returnTo={open.returnTo} onClosed={() => setOpen(null)} />}
     </section>
   );
 }
@@ -335,9 +336,10 @@ const centredBox = (): Box => {
   return { left: (window.innerWidth - width) / 2, top: (window.innerHeight - height) / 2, width, height };
 };
 
-function CareDetail({ n, source, onClosed }: { n: number; source: HTMLElement; onClosed: () => void }) {
+function CareDetail({ n, source, returnTo, onClosed }: { n: number; source: HTMLElement; returnTo: HTMLElement | null; onClosed: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const panel = useRef<HTMLDivElement>(null);
+  const num = useRef<HTMLSpanElement>(null);
   const backdrop = useRef<HTMLDivElement>(null);
   const content = useRef<HTMLDivElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
@@ -365,8 +367,9 @@ function CareDetail({ n, source, onClosed }: { n: number; source: HTMLElement; o
         .timeline()
         .fromTo(backdrop.current, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0)
         .to(panel.current, { ...centredBox(), borderRadius: 40, duration: 0.85, ease: "expo.out" }, 0)
-        .fromTo(".detail-num", { yPercent: 25, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.1, ease: "expo.out" }, 0.15)
-        .fromTo(content.current, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.3);
+        .fromTo(num.current, { yPercent: 25, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.1, ease: "expo.out" }, 0.15)
+        // Opacity only: the close button inside already has focus and must keep it.
+        .fromTo(content.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.3);
     }
 
     return () => {
@@ -384,15 +387,15 @@ function CareDetail({ n, source, onClosed }: { n: number; source: HTMLElement; o
       source.style.visibility = "";
       dialog.current?.close();
       lenis?.start();
-      source.focus({ preventScroll: true });
+      (returnTo ?? source).focus({ preventScroll: true });
       onClosed();
       after?.();
     };
     if (prefersReducedMotion()) return finish();
     gsap
       .timeline({ onComplete: finish })
-      .to(content.current, { autoAlpha: 0, y: 16, duration: 0.2, ease: "power2.in" }, 0)
-      .to(".detail-num", { opacity: 0, duration: 0.2 }, 0)
+      .to(content.current, { opacity: 0, y: 16, duration: 0.2, ease: "power2.in" }, 0)
+      .to(num.current, { opacity: 0, duration: 0.2 }, 0)
       .to(panel.current, { ...boxOf(source), borderRadius: 32, duration: 0.6, ease: "power3.inOut" }, 0.08)
       .to(backdrop.current, { opacity: 0, duration: 0.45, ease: "power2.in" }, 0.2);
   };
@@ -417,6 +420,7 @@ function CareDetail({ n, source, onClosed }: { n: number; source: HTMLElement; o
       <div ref={panel} className={`fixed overflow-hidden rounded-[2rem] shadow-[0_40px_120px_-20px_rgb(0_0_0/0.55)] ${t.card}`}>
         {t.stars && <div className="bg-stars-light pointer-events-none absolute inset-0 opacity-[0.06]" />}
         <span
+          ref={num}
           aria-hidden="true"
           className={`detail-num pointer-events-none absolute -right-6 -bottom-16 font-display text-[16rem] leading-none font-semibold select-none md:-bottom-24 md:text-[26rem] ${t.num}`}
         >

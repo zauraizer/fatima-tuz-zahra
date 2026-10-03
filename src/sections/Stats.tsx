@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { marquee, stats } from "../content";
 import { StarGlyph } from "../components/Bits";
 import { Icon, type IconName } from "../components/Icon";
 import { SpotlightCard } from "./Care";
 import { Counter, Marquee } from "../components/Effects";
 import { DraftNum } from "../lib/draft";
+import { useReducedMotion } from "../lib/hooks";
 
 const STAT_ICONS: IconName[] = ["users", "clock", "school", "meal"];
 
@@ -40,6 +42,8 @@ export function Stats() {
 
 /** Two counter-running tickers of our values; they accelerate with scroll and reverse on the way back up. */
 export function ValuesMarquee() {
+  const [paused, setPaused] = useState(false);
+  const reduced = useReducedMotion();
   const row = (outline: boolean) =>
     marquee.map((word) => (
       <span key={word} className="flex items-center">
@@ -55,11 +59,23 @@ export function ValuesMarquee() {
     ));
 
   return (
-    <section aria-label="Our values" className="overflow-hidden border-b border-line bg-cream py-10 md:py-14">
-      <Marquee>{row(false)}</Marquee>
-      <Marquee reverse className="mt-1 md:mt-2">
+    <section aria-label="Our values" className="relative overflow-hidden border-b border-line bg-cream py-10 md:py-14">
+      <Marquee paused={paused}>{row(false)}</Marquee>
+      <Marquee paused={paused} reverse className="mt-1 md:mt-2">
         {row(true)}
       </Marquee>
+      {/* Anything that moves on its own needs a way to stop it. */}
+      {!reduced && (
+        <button
+          type="button"
+          onClick={() => setPaused((p) => !p)}
+          aria-label={paused ? "Play the moving words" : "Pause the moving words"}
+          data-pop="1.1"
+          className="absolute top-1 right-3 z-10 grid size-9 place-items-center rounded-full border border-line bg-cream/90 text-forest transition-colors hover:border-forest md:top-3 md:right-5"
+        >
+          <Icon name={paused ? "play" : "pause"} className="size-4" strokeWidth={2.2} />
+        </button>
+      )}
     </section>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { contact, nav } from "../content";
 import { textOf } from "../lib/draft";
 import { gsap, ScrollTrigger, useGSAP } from "../lib/gsap";
+import { useMedia, useReducedMotion } from "../lib/hooks";
 import { Brand } from "./Brand";
 import { Magnetic } from "./Effects";
 import { Icon } from "./Icon";
@@ -18,52 +19,81 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const lenis = useLenis();
+  const desktop = useMedia("(min-width: 1024px)");
+  const reduced = useReducedMotion();
 
   // Hide on the way down, return on the way up; track which section is in view.
-  useGSAP(() => {
-    let hidden: boolean | null = null;
-    const update = (y: number, direction: number) => {
-      // Stay out of the way while the opening splash is on screen.
-      const splash = document.getElementById("splash")?.offsetHeight ?? 0;
-      setScrolled(y > splash + 24);
-      const hide = y < splash * 0.8 || (direction === 1 && y > splash + 360);
-      if (hide === hidden) return;
-      const first = hidden === null;
-      hidden = hide;
-      if (first) gsap.set(header.current, { yPercent: hide ? -130 : 0 });
-      else gsap.to(header.current, { yPercent: hide ? -130 : 0, duration: 0.6, ease: hide ? "power3.in" : "expo.out" });
-    };
-    ScrollTrigger.create({
-      start: 0,
-      end: "max",
-      onUpdate: (self) => update(self.scroll(), self.direction),
-      onRefresh: (self) => update(self.scroll(), 1),
-    });
-
-    nav.forEach(({ id }, i) => {
-      const el = document.getElementById(id);
-      if (!el) return;
+  // Re-run when reduced motion changes, because the day section is swapped for a different element.
+  useGSAP(
+    () => {
+      let hidden: boolean | null = null;
+      let focused = false;
+      let last = { y: 0, direction: 1 };
+      const update = (y: number, direction: number) => {
+        last = { y, direction };
+        // Stay out of the way while the opening splash is on screen,
+        // but never while a keyboard user is tabbing through the header.
+        const splash = document.getElementById("splash")?.offsetHeight ?? 0;
+        setScrolled(y > splash + 24);
+        const hide = !focused && (y < splash * 0.8 || (direction === 1 && y > splash + 360));
+        if (hide === hidden) return;
+        const first = hidden === null;
+        hidden = hide;
+        if (first) gsap.set(header.current, { yPercent: hide ? -130 : 0 });
+        else gsap.to(header.current, { yPercent: hide ? -130 : 0, duration: 0.6, ease: hide ? "power3.in" : "expo.out", overwrite: true });
+      };
       ScrollTrigger.create({
-        trigger: el,
-        start: "top 45%",
-        end: "bottom 45%",
-        refreshPriority: -1,
-        onToggle: (self) => {
-          if (self.isActive) setActive(id);
-          else if (i === 0 && self.direction === -1) setActive(null);
-        },
+        start: 0,
+        end: "max",
+        onUpdate: (self) => update(self.scroll(), self.direction),
+        onRefresh: (self) => update(self.scroll(), 1),
       });
-    });
-  });
+
+      const el = header.current!;
+      const onFocusIn = () => {
+        focused = true;
+        update(last.y, last.direction);
+      };
+      const onFocusOut = (e: FocusEvent) => {
+        if (el.contains(e.relatedTarget as Node)) return;
+        focused = false;
+        update(last.y, last.direction);
+      };
+      el.addEventListener("focusin", onFocusIn);
+      el.addEventListener("focusout", onFocusOut);
+
+      nav.forEach(({ id }, i) => {
+        const section = document.getElementById(id);
+        if (!section) return;
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 45%",
+          end: "bottom 45%",
+          refreshPriority: -1,
+          onToggle: (self) => {
+            if (self.isActive) setActive(id);
+            else if (i === 0 && self.direction === -1) setActive(null);
+          },
+        });
+      });
+
+      return () => {
+        el.removeEventListener("focusin", onFocusIn);
+        el.removeEventListener("focusout", onFocusOut);
+      };
+    },
+    { dependencies: [reduced], revertOnUpdate: true },
+  );
 
   // Slide the pill indicator under the active link.
   useEffect(() => {
     const place = () => {
-      const link = navList.current?.querySelector<HTMLElement>(`[data-id="${active}"]`);
-      if (!link) return gsap.to(indicator.current, { autoAlpha: 0, duration: 0.3 });
+      const item = navList.current?.querySelector<HTMLElement>(`[data-id="${active}"]`)?.parentElement;
+      if (!item) return gsap.to(indicator.current, { autoAlpha: 0, duration: 0.3, overwrite: true });
       gsap.to(indicator.current, {
-        x: link.offsetLeft,
-        width: link.offsetWidth,
+        x: item.offsetLeft,
+        width: item.offsetWidth,
+        overwrite: true,
         autoAlpha: 1,
         duration: 0.7,
         ease: "expo.out",
@@ -85,6 +115,20 @@ export function Header() {
       .from(items, { yPercent: 120, autoAlpha: 0, duration: 0.8, stagger: 0.05, ease: "expo.out" }, "-=0.45");
   });
 
+  // The menu only exists below desktop width: close it if the window grows past that
+  // (e.g. a tablet rotating), or the page behind would stay locked.
+  useEffect(() => {
+    if (desktop) setOpen(false);
+  }, [desktop]);
+
+  // Keyboard and screen-reader users stay inside the open menu.
+  useEffect(() => {
+    if (!open) return;
+    const page = ["splash", "main", "site-footer"].map((id) => document.getElementById(id)).filter((el) => el !== null);
+    page.forEach((el) => (el.inert = true));
+    return () => page.forEach((el) => (el.inert = false));
+  }, [open]);
+
   // Only touch Lenis on real open/close transitions, so the intro's scroll lock isn't undone on mount.
   const wasOpen = useRef(false);
   useEffect(() => {
@@ -100,8 +144,6 @@ export function Header() {
       tl.timeScale(1.6).reverse();
       lenis?.start();
     }
-    // Keyboard and screen-reader users stay inside the open menu.
-    for (const id of ["main", "site-footer"]) document.getElementById(id)?.toggleAttribute("inert", open);
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" && open) {
@@ -125,13 +167,9 @@ export function Header() {
         >
           <Brand light={open} />
 
-          <nav aria-label="Main" className="hidden lg:block">
-            <ul ref={navList} className="relative flex items-center gap-1">
-              <span
-                ref={indicator}
-                className="invisible absolute top-0 left-0 h-full rounded-full bg-forest-soft opacity-0"
-                aria-hidden="true"
-              />
+          <nav aria-label="Main" className="relative hidden lg:block">
+            <span ref={indicator} className="invisible absolute top-0 left-0 h-full rounded-full bg-forest-soft opacity-0" aria-hidden="true" />
+            <ul ref={navList} className="flex items-center gap-1">
               {nav.map((item) => (
                 <li key={item.id} className="relative">
                   <a
@@ -191,7 +229,7 @@ export function Header() {
           <ul className="flex flex-col">
             {nav.map((item, i) => (
               <li key={item.id} className="overflow-hidden border-b border-cream/10">
-                <a href={`#${item.id}`} className="menu-item flex items-baseline gap-4 py-4 font-display text-4xl font-medium">
+                <a href={`#${item.id}`} className="menu-item flex items-baseline gap-4 py-4 font-display text-4xl font-medium focus-visible:outline-offset-[-3px]">
                   <span className="font-sans text-xs font-bold tracking-widest text-gold-bright">{String(i + 1).padStart(2, "0")}</span>
                   {item.label}
                 </a>

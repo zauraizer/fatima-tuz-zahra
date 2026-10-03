@@ -1,5 +1,62 @@
 # Website audit — Fatima tuz Zahra Orphanage
 
+## Second pass: leaks, security and errors (2 October 2026)
+
+**Scope:** everything ever committed, the built site visitors download, the GitHub repo, and the running site (desktop, tablet, phone, reduced motion, keyboard only). Two independent code reviews (memory and lifecycle; bugs, accessibility and security), with every finding re-checked before fixing.
+
+### Leak checks: all clean
+
+| Check | Result |
+| --- | --- |
+| API keys, tokens, passwords, private keys (17 key formats plus random-looking strings) in every version of every committed file, all commit messages, the current files and the built site | **None found.** The scanner was tested on fake keys first. |
+| Personal info in commits | Commits use the private GitHub noreply address. No local paths or emails in the site. |
+| GitHub repo | Private, one collaborator, no forks, deploy keys, webhooks, Actions secrets or extra branches. |
+| Image metadata | Only pixel dimensions (no GPS, device or author). |
+| Built site | No source maps, no cookies or browser storage, no requests to any other website (fonts are self-hosted). |
+| Dependencies | `npm audit`: 0 vulnerabilities. |
+
+### Fixed in this pass
+
+| # | Severity | Finding | What changed |
+| --- | --- | --- | --- |
+| 1 | High | Content that fades in on scroll was hidden from keyboard and screen-reader users until scrolled to (48 controls and 7 of 8 section headings at page load). | Hidden with opacity only, so it stays reachable and readable. Tabbing into a section reveals it at once. |
+| 2 | High | Opening the phone menu and then widening the window (e.g. rotating a tablet) locked the whole page. | The menu closes itself at desktop width. The page lock is always undone. |
+| 3 | High | The header could take keyboard focus while off screen. | It slides into view while it has focus. |
+| 4 | Medium | "Other" amount accepted junk: "Give $∞", huge numbers, "1.2.3" and comma decimals read wrongly. | Accepts $1 to $100,000 with up to two decimals, reads "25,50" as $25.50, and explains any problem. |
+| 5 | Medium | Contact form: any text passed as an email; with no form service set, it showed "Thank you" and threw the message away even if no email app opened. | Emails are checked and the fields are marked for screen readers. The message stays on screen with the address to email if nothing opened. |
+| 6 | Medium | Hero "Give once" opened the donate box on Monthly. | It switches to One time. |
+| 7 | Medium | The values ticker moved forever with no way to stop it (WCAG 2.2.2). | Pause button, and it stops under the mouse. |
+| 8 | Medium | Gallery cards were one big button, so screen readers heard only "Open A safe home" and the six headings were missing. | Each card has a real "Read more about…" button and its heading and text are read normally. Focus returns to the right card after closing. |
+| 9 | Medium | "Double your gift" (employer matching) implies registered charity status. Matching programs only accept 501(c)(3) organisations. | Hidden until the EIN is set, like the other tax wording. The grid adjusts so it stays even. |
+| 10 | Medium | Photo placeholder instructions ("Add a photo of the home…") would show to real visitors. | Shown only in draft mode. |
+| 11 | Medium | Three controls had no visible focus outline. Success messages weren't announced and lost keyboard focus. | Focus outlines added. Focus moves to the thank-you messages. |
+| 12 | Medium | Background animations kept running after a visitor switched on Reduce Motion, and the hero's drifting colours ran even off screen. | All motion follows the setting live. The hero pauses off screen. Lanterns run at the same speed on 120 Hz screens. |
+| 13 | Low | Several animations weren't cleaned up when they re-ran, so they piled up in memory over a long visit. | Cleaned up on every change. Verified: the page's element count stays flat over repeated scrolls and pop-ups. |
+| 14 | Low | Small things: "Link copied" shown even when copying failed; Back to top didn't move focus; invalid HTML in the nav and bank details; an empty link would open the page itself in a new tab; two small footer tap targets on phones. | All fixed. |
+| 15 | Low | Leftovers from removed features: the "Donate supplies" contact topic, "supplies" in Get involved, three unused icons. | Removed. |
+
+### New safeguards
+
+- **Launch guard:** with `draftMode: false`, the build refuses to finish while any placeholder is left, so unfinished text can't reach visitors. A draft build tells search engines not to index it.
+- **Content Security Policy** on the built site: only the site's own scripts can run.
+- **`.gitignore`** blocks `.env` and key files. A note in `src/content.ts` says never to put API keys or passwords there (everything in it is public).
+- **Donation link hook** (`donateUrl` in `src/content.ts`): the place to pass the donor's amount, frequency and designation to your donation platform once it's chosen.
+
+### Needs you (added in this pass)
+
+| Priority | Item | Why |
+| --- | --- | --- |
+| **High** | **Make Zakat reach a separate fund.** The donate box lets people choose Zakat, but the choice isn't passed to a platform yet. When you connect one, fill in `donateUrl` or use a separate campaign link per designation. | The site promises "Zakat directed to eligible children". |
+| **High** | **Think twice before publishing bank account and routing numbers.** Many charities say "email us for wire details" instead, or use a deposit-only account with an ACH debit block. | Published numbers can be used for check fraud and unauthorized debits. |
+| Medium | **The "100% goes to the children" FAQ.** Card processors take a fee from each gift. Pick a platform that lets donors cover fees, or say "100% of what we receive". | Keeps the promise exactly true. |
+| Medium | **Host security headers** when you deploy: `frame-ancestors 'none'` (or `X-Frame-Options: DENY`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`. | These can only be set by the host, not the page. |
+| Medium | **Don't deploy a draft build publicly.** It shows the draft badge and setup messages, though search engines are told to skip it. | |
+| Low | **If you add a Google map**, it sets Google cookies. Update the privacy notice, or use a click-to-load map. For a children's home, also consider whether to show the exact location at all. | Privacy and safeguarding. |
+
+---
+
+## First pass (1 October 2026)
+
 **Date:** 1 October 2026 **Scope:** the whole one-page site (desktop 1280×800, phone 375×812, reduced motion)
 **Method:** contrast measured against WCAG 2.2 AA; Core Web Vitals measured in the browser on the production build; DOM checks for headings, landmarks, labels and links; hands-on testing of every interactive part.
 
@@ -64,4 +121,4 @@ Timings were measured on localhost, so a real connection adds network time. The 
 
 ## Placeholder count
 
-The draft badge (bottom left of the site) currently counts **38** items to fill in. Click **Next** to step through them.
+The draft badge (bottom left of the site) currently counts **36** items to fill in. Click **Next** to step through them.

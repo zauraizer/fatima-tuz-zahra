@@ -141,7 +141,7 @@ export function Counter({ value, suffix = "", className = "" }: { value: number;
   const final = formatNumber(value) + suffix;
 
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       const el = ref.current!;
       if (reduced) {
         el.textContent = final;
@@ -149,7 +149,7 @@ export function Counter({ value, suffix = "", className = "" }: { value: number;
       }
       el.textContent = "0" + suffix;
       const counter = { v: 0 };
-      return onEnterOnce(el, () =>
+      const play = contextSafe!(() =>
         gsap.to(counter, {
           v: value,
           duration: 2.4,
@@ -159,8 +159,9 @@ export function Counter({ value, suffix = "", className = "" }: { value: number;
           },
         }),
       );
+      return onEnterOnce(el, play);
     },
-    { dependencies: [value, suffix, reduced] },
+    { dependencies: [value, suffix, reduced], revertOnUpdate: true },
   );
 
   // GSAP owns the visible digits; screen readers get the final figure.
@@ -174,49 +175,64 @@ export function Counter({ value, suffix = "", className = "" }: { value: number;
 
 /* ------------------------------------------------------------------
    Endless ticker that speeds up with scroll velocity and reverses
-   when you scroll back up
+   when you scroll back up. It glides to a stop while hovered or paused.
    ------------------------------------------------------------------ */
 export function Marquee({
   children,
   className = "",
   baseSpeed = 0.022,
   reverse = false,
+  paused = false,
 }: {
   children: ReactNode;
   className?: string;
   baseSpeed?: number;
   reverse?: boolean;
+  paused?: boolean;
 }) {
   const root = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
+  const reduced = useReducedMotion();
+  const pausedRef = useRef(paused);
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
 
   useGSAP(
     () => {
-      if (prefersReducedMotion()) return;
+      if (reduced) return;
       const wrap = gsap.utils.wrap(0, 50);
       const setX = gsap.quickSetter(track.current, "xPercent");
       let pos = 0;
       let speed = 1;
       let visible = false;
+      let hovered = false;
       const tick = () => {
         if (!visible) return;
         const v = lenis?.velocity ?? 0;
         const dir = lenis?.direction === -1 ? -1 : 1;
-        const target = dir * (1 + Math.min(Math.abs(v) * 0.12, 6));
+        const target = pausedRef.current || hovered ? 0 : dir * (1 + Math.min(Math.abs(v) * 0.12, 6));
         speed += (target - speed) * 0.06;
         pos += baseSpeed * speed * gsap.ticker.deltaRatio();
         setX(-wrap(reverse ? -pos : pos));
       };
+      const el = root.current!;
+      const onEnter = (e: PointerEvent) => (hovered = e.pointerType === "mouse");
+      const onLeave = () => (hovered = false);
+      el.addEventListener("pointerenter", onEnter);
+      el.addEventListener("pointerleave", onLeave);
       const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
-      io.observe(root.current!);
+      io.observe(el);
       gsap.ticker.add(tick);
       return () => {
         gsap.ticker.remove(tick);
         io.disconnect();
+        el.removeEventListener("pointerenter", onEnter);
+        el.removeEventListener("pointerleave", onLeave);
       };
     },
-    { scope: root, dependencies: [lenis, reverse], revertOnUpdate: true },
+    { scope: root, dependencies: [lenis, reverse, reduced], revertOnUpdate: true },
   );
 
   return (
@@ -253,16 +269,17 @@ type Lantern = { x: number; y: number; r: number; vy: number; sway: number; phas
 
 export function Lanterns({ className = "", count = 26 }: { className?: string; count?: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     const canvas = ref.current!;
     const ctx = canvas.getContext("2d")!;
     const sprite = makeGlowSprite();
-    const reduced = prefersReducedMotion();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let w = 0;
     let h = 0;
     let t = 0;
+    let last = 0;
     let raf = 0;
     let running = false;
     let lanterns: Lantern[] = [];
@@ -290,10 +307,13 @@ export function Lanterns({ className = "", count = 26 }: { className?: string; c
       }
     };
 
-    const step = () => {
-      t++;
+    // Speeds are tuned per 60 Hz frame; scale by real elapsed time so 120 Hz screens match.
+    const step = (now: number) => {
+      const dt = last ? Math.min((now - last) / (1000 / 60), 3) : 1;
+      last = now;
+      t += dt;
       for (const l of lanterns) {
-        l.y -= l.vy;
+        l.y -= l.vy * dt;
         if (l.y < -30) Object.assign(l, spawn(false));
       }
       draw();
@@ -319,6 +339,7 @@ export function Lanterns({ className = "", count = 26 }: { className?: string; c
       if (reduced) return;
       if (e.isIntersecting && !running) {
         running = true;
+        last = 0;
         raf = requestAnimationFrame(step);
       } else if (!e.isIntersecting && running) {
         running = false;
@@ -332,7 +353,7 @@ export function Lanterns({ className = "", count = 26 }: { className?: string; c
       ro.disconnect();
       io.disconnect();
     };
-  }, [count]);
+  }, [count, reduced]);
 
   return <canvas ref={ref} className={className} aria-hidden="true" />;
 }

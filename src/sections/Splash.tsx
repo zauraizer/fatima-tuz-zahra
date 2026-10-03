@@ -33,7 +33,7 @@ export function Splash() {
         .from(q(".splash-word"), { yPercent: 120, duration: 1, stagger: 0.06 }, 0.3)
         .from(q(".splash-ar"), { autoAlpha: 0, y: 14, filter: "blur(6px)", duration: 0.9 }, 0.6)
         .from(q(".splash-tag"), { autoAlpha: 0, y: 12, duration: 0.8 }, 0.9)
-        .from(q(".splash-cue"), { autoAlpha: 0, y: 18, duration: 0.9 }, 1.3);
+        .from(q(".splash-cue"), { opacity: 0, y: 18, duration: 0.9 }, 1.3);
 
       // Scrolling out. The hero starts animating once the splash is ~40% gone.
       const curve = { r: 0 };

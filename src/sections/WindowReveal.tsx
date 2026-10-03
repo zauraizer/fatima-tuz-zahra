@@ -55,7 +55,7 @@ export function WindowReveal() {
         .to(shape, { p: 1, duration: 1, ease: "power2.inOut", onUpdate: applyShape }, 0)
         .fromTo(q(".wr-inner"), { scale: 1.35 }, { scale: 1, duration: 1, ease: "power2.inOut" }, 0)
         .to(q(".wr-outer"), { autoAlpha: 0, y: -50, scale: 0.94, duration: 0.45, ease: "power2.in" }, 0)
-        .fromTo(q(".wr-text"), { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out" }, 0.62)
+        .fromTo(q(".wr-text"), { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 0.62)
         .to(q(".wr-word"), { opacity: 1, duration: 0.25, stagger: 0.045, ease: "none" }, 0.75)
         .to({}, { duration: 0.35 });
 

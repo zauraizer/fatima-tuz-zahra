@@ -16,16 +16,29 @@ export function PrivacyDialog({ open, onClose }: { open: boolean; onClose: () =>
     if (open && !dialog.open) {
       dialog.showModal();
       lenis?.stop();
-      if (!instant) gsap.fromTo(dialog, { autoAlpha: 0, y: 40, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.7, ease: "expo.out" });
+      // Opacity only: the dialog's close button already has focus and must keep it.
+      if (!instant) gsap.fromTo(dialog, { opacity: 0, y: 40, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "expo.out", overwrite: true });
     } else if (!open && dialog.open) {
       const finish = () => {
         dialog.close();
         lenis?.start();
       };
       if (instant) finish();
-      else gsap.to(dialog, { autoAlpha: 0, y: 24, scale: 0.98, duration: 0.3, ease: "power2.in", onComplete: finish });
+      else gsap.to(dialog, { opacity: 0, y: 24, scale: 0.98, duration: 0.3, ease: "power2.in", onComplete: finish, overwrite: true });
     }
   }, [open, lenis]);
+
+  // If it ever unmounts while open, don't leave the page locked.
+  useEffect(() => {
+    const dialog = ref.current!;
+    return () => {
+      gsap.killTweensOf(dialog);
+      if (dialog.open) {
+        dialog.close();
+        lenis?.start();
+      }
+    };
+  }, [lenis]);
 
   return (
     <dialog

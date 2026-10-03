@@ -2,3 +2,10 @@ node_modules
 dist
 .DS_Store
 *.local
+
+# Secrets never belong in this repo
+.env
+.env.*
+!.env.example
+*.pem
+*.key

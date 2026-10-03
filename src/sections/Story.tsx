@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { story } from "../content";
+import { site, story } from "../content";
 import { SectionHeading } from "../components/Bits";
 import { Emblem } from "../components/Brand";
 import { Icon } from "../components/Icon";
@@ -30,18 +30,25 @@ export function Story() {
     <section ref={root} id="about" className="relative overflow-x-clip py-28 outline-none md:py-36">
       <div className="mx-auto grid max-w-[1240px] items-center gap-20 px-5 lg:grid-cols-[0.9fr_1.1fr] lg:gap-24">
         <div className="relative mx-auto w-full max-w-[420px]">
-          <figure data-reveal="clip" className="arch relative aspect-[4/5] overflow-hidden border-2 border-dashed border-line bg-sand">
+          {/* Photo goes here. Until then: a patterned arch, with instructions shown only in draft mode. */}
+          <div data-reveal="clip" className={`arch relative aspect-[4/5] overflow-hidden bg-sand ${site.draftMode ? "border-2 border-dashed border-line" : "border border-line"}`}>
             <div data-reveal-inner className="absolute inset-0">
               <div className="story-pattern bg-stars absolute -inset-[15%] opacity-25" />
             </div>
-            <div className="relative grid h-full place-content-center justify-items-center gap-4 p-10 text-center text-ink-soft">
-              <Icon name="camera" className="size-12 text-gold" draw />
-              <figcaption className="text-[0.95rem]">
-                Add a photo of the home, like the entrance, courtyard or a classroom.
-                <small className="mt-2 block opacity-80">Avoid showing children's faces unless you have consent.</small>
-              </figcaption>
-            </div>
-          </figure>
+            {site.draftMode ? (
+              <div className="relative grid h-full place-content-center justify-items-center gap-4 p-10 text-center text-ink-soft">
+                <Icon name="camera" className="size-12 text-gold" draw />
+                <p className="text-[0.95rem]">
+                  Add a photo of the home, like the entrance, courtyard or a classroom.
+                  <small className="mt-2 block opacity-80">Avoid showing children's faces unless you have consent.</small>
+                </p>
+              </div>
+            ) : (
+              <div className="relative grid h-full place-items-center" aria-hidden="true">
+                <Emblem className="size-28 opacity-80" />
+              </div>
+            )}
+          </div>
 
           {/* Rotating circular badge */}
           <div className="story-badge absolute -right-1 -bottom-8 size-32 md:-right-10 md:size-36" data-reveal="scale" data-delay="0.4">

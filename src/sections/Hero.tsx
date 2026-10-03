@@ -3,31 +3,36 @@ import { hero, site } from "../content";
 import { Lanterns, Magnetic } from "../components/Effects";
 import { Icon } from "../components/Icon";
 import { RichText } from "../lib/draft";
-import { gsap, isFinePointer, prefersReducedMotion, useGSAP } from "../lib/gsap";
-import { introFinished } from "../lib/intro";
+import { useDonation } from "../lib/donation";
+import { gsap, isFinePointer, ScrollTrigger, useGSAP } from "../lib/gsap";
+import { useReducedMotion } from "../lib/hooks";
+import { finishIntro, introFinished } from "../lib/intro";
 
 export function Hero() {
   const root = useRef<HTMLElement>(null);
   const title = useRef<HTMLHeadingElement>(null);
+  const reduced = useReducedMotion();
+  const { prefill } = useDonation();
 
   useGSAP(
     (_ctx, contextSafe) => {
-      if (prefersReducedMotion()) return;
+      if (reduced) return;
       const q = gsap.utils.selector(root);
       let alive = true;
 
-      // Hidden until the intro curtain lifts.
+      // Hidden until the intro curtain lifts. The copy uses opacity only (not
+      // visibility), so its links stay reachable by keyboard and screen readers.
       gsap.set(title.current, { opacity: 0, y: 34, scale: 0.97, filter: "blur(14px)" });
-      gsap.set(q(".hero-fade"), { autoAlpha: 0, y: 26 });
+      gsap.set(q(".hero-fade"), { opacity: 0, y: 26 });
       gsap.set(q(".hero-arch"), { clipPath: "inset(100% 0% 0% 0%)" });
       gsap.set(q(".hero-back"), { autoAlpha: 0, scale: 0.92, rotate: -4 });
       gsap.set(q(".hero-ar"), { autoAlpha: 0, y: 18, filter: "blur(8px)" });
       gsap.set(q(".hero-star"), { autoAlpha: 0, scale: 0.6 });
       gsap.set(q(".hero-card"), { autoAlpha: 0, scale: 0.85, y: 24 });
-      gsap.set(q(".hero-cue"), { autoAlpha: 0 });
+      gsap.set(q(".hero-cue"), { opacity: 0 });
 
-      // Aurora: soft colour fields drifting forever behind everything.
-      q(".hero-blob").forEach((blob, i) => {
+      // Aurora: soft colour fields drifting behind everything, paused while the hero is off screen.
+      const aurora = q(".hero-blob").map((blob, i) =>
         gsap.to(blob, {
           xPercent: gsap.utils.random(-28, 28),
           yPercent: gsap.utils.random(-22, 22),
@@ -37,7 +42,14 @@ export function Hero() {
           repeat: -1,
           yoyo: true,
           delay: i * -2.5,
-        });
+          paused: true,
+        }),
+      );
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => aurora.forEach((t) => (self.isActive ? t.resume() : t.pause())),
       });
 
       const play = contextSafe!(() => {
@@ -47,15 +59,17 @@ export function Hero() {
         gsap
           .timeline()
           .to(title.current, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 1.5, clearProps: "filter" }, 0)
-          .to(q(".hero-fade"), { autoAlpha: 1, y: 0, duration: 1.2, stagger: 0.09 }, 0.3)
+          .to(q(".hero-fade"), { opacity: 1, y: 0, duration: 1.2, stagger: 0.09 }, 0.3)
           .to(q(".hero-arch"), { clipPath: "inset(0% 0% 0% 0%)", duration: 1.7, ease: "expo.inOut" }, 0)
           .to(q(".hero-back"), { autoAlpha: 1, scale: 1, rotate: 0, duration: 1.6 }, 0.35)
           .to(q(".hero-star"), { autoAlpha: 1, scale: 1, duration: 1.6 }, 0.9)
           .to(q(".hero-ar"), { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 1.3 }, 1.0)
           .to(q(".hero-card"), { autoAlpha: 1, scale: 1, y: 0, duration: 1.1, ease: "back.out(1.6)", stagger: 0.16 }, 1.15)
-          .to(q(".hero-cue"), { autoAlpha: 1, duration: 1 }, 1.6);
+          .to(q(".hero-cue"), { opacity: 1, duration: 1 }, 1.6);
       });
       introFinished.then(play);
+      // Tabbing into the hero before scrolling should show it straight away.
+      root.current!.addEventListener("focusin", finishIntro);
 
       // Scroll away, Apple-style: the copy recedes (shrinks + fades), the arch sinks and swells.
       const st = { trigger: root.current, start: "top top", end: "bottom top", scrub: true };
@@ -83,13 +97,15 @@ export function Hero() {
         return () => {
           alive = false;
           root.current?.removeEventListener("pointermove", onMove);
+          root.current?.removeEventListener("focusin", finishIntro);
         };
       }
       return () => {
         alive = false;
+        root.current?.removeEventListener("focusin", finishIntro);
       };
     },
-    { scope: root },
+    { scope: root, dependencies: [reduced], revertOnUpdate: true },
   );
 
   return (
@@ -120,7 +136,14 @@ export function Hero() {
               </a>
             </Magnetic>
             <Magnetic>
-              <a href="#donate" className="btn btn-ghost">
+              <a
+                href="#donate"
+                onClick={(e) => {
+                  e.preventDefault();
+                  prefill({ frequency: "once" });
+                }}
+                className="btn btn-ghost"
+              >
                 Give once
               </a>
             </Magnetic>

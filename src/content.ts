@@ -52,6 +52,27 @@ export const links = {
   youtube: draft("https://youtube.com/"),
 };
 
+/*
+  Passes the donor's choices (amount, monthly or one time, and where it goes)
+  on to your donation page, so they don't have to choose again. Every platform
+  names these differently: once you've picked one, look up how it pre-fills a
+  gift from the link and set them here. For example:
+    url.searchParams.set("amount", String(gift.amount));
+    url.searchParams.set("frequency", gift.frequency === "monthly" ? "monthly" : "once");
+  Zakat must reach a separate fund, so make sure the designation gets through
+  (a parameter, or a separate campaign link per designation).
+*/
+export function donateUrl(base: string, gift: { amount: number; frequency: "monthly" | "once"; designation: Designation }) {
+  const url = new URL(base);
+  void gift; // not passed on yet; see above
+  return url.toString();
+}
+
+/*
+  Use the public form address each service gives you. Never paste an API key,
+  secret or password into this file: everything here ends up in the public
+  page, where anyone can read it.
+*/
 export const forms = {
   /** Formspree / Basin / Getform endpoint. Empty = open the visitor's email app instead. */
   contactEndpoint: "",
@@ -209,12 +230,13 @@ export const give = {
 export const involved = {
   eyebrow: "Get involved",
   title: "More ways to stand with our children",
-  lead: "Every kind of help matters: time, skills, supplies, or simply telling a friend.",
+  lead: "Every kind of help matters: your time, your skills, or simply telling a friend.",
   cards: [
     { key: "volunteer", title: "Volunteer", body: "Teach a class, coach a sport or share a skill. All volunteers go through a background check before working with children.", cta: "Offer your time", href: "#contact" },
     { key: "meal", title: "Sponsor a meal", body: "Mark a birthday, an Eid, or the memory of a loved one by providing a meal for all of our children.", cta: "Book a meal day", href: "#contact" },
     { key: "fundraise", title: "Start a fundraiser", body: "Turn a birthday, Ramadan challenge or a 5K into support for our children.", cta: "Start fundraising", href: "fundraiser" },
-    { key: "match", title: "Double your gift", body: "Many US employers match charitable donations. Ask your HR team. It can double your impact at no cost to you.", cta: "Ask us for a match letter", href: "#contact" },
+    // Employer matching programs only accept registered charities, so this card stays hidden until the EIN is set.
+    { key: "match", title: "Double your gift", body: "Many US employers match charitable donations. Ask your HR team. It can double your impact at no cost to you.", cta: "Ask us for a match letter", href: "#contact", needsTaxExempt: true },
   ],
 };
 

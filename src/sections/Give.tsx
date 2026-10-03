@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { bank, contact, give, isTaxExempt, links, sponsorship, taxExempt, type Designation } from "../content";
+import { bank, contact, donateUrl, give, isTaxExempt, links, sponsorship, taxExempt, type Designation } from "../content";
 import { CopyButton, SectionHeading } from "../components/Bits";
 import { Collapsible } from "../components/Collapsible";
 import { Magnetic } from "../components/Effects";
 import { Icon } from "../components/Icon";
 import { useToast } from "../components/Toast";
 import { impactFor, useDonation } from "../lib/donation";
-import { DraftNum, isDraft, T, textOf } from "../lib/draft";
+import { DraftNum, linkMissing, T, textOf } from "../lib/draft";
 import { usd, usdWhole } from "../lib/format";
 import { gsap, prefersReducedMotion, useGSAP } from "../lib/gsap";
 
@@ -14,31 +14,46 @@ import { gsap, prefersReducedMotion, useGSAP } from "../lib/gsap";
 function useTweenedMoney(value: number) {
   const ref = useRef<HTMLSpanElement>(null);
   const shown = useRef({ v: value });
-  useGSAP(
-    () => {
-      const el = ref.current!;
-      if (!el.textContent) el.textContent = usd(value);
-      if (prefersReducedMotion()) {
-        shown.current.v = value;
+  // A plain effect: each new value kills the previous tween and carries on from
+  // wherever the number had got to.
+  useEffect(() => {
+    const el = ref.current!;
+    if (!el.textContent) el.textContent = usd(value);
+    if (prefersReducedMotion()) {
+      shown.current.v = value;
+      el.textContent = usd(value);
+      return;
+    }
+    const tween = gsap.to(shown.current, {
+      v: value,
+      duration: 0.9,
+      ease: "expo.out",
+      onUpdate: () => {
+        el.textContent = usdWhole(shown.current.v);
+      },
+      onComplete: () => {
         el.textContent = usd(value);
-        return;
-      }
-      gsap.to(shown.current, {
-        v: value,
-        duration: 0.9,
-        ease: "expo.out",
-        overwrite: true,
-        onUpdate: () => {
-          el.textContent = usdWhole(shown.current.v);
-        },
-        onComplete: () => {
-          el.textContent = usd(value);
-        },
-      });
-    },
-    { dependencies: [value] },
-  );
+      },
+    });
+    return () => {
+      tween.kill();
+    };
+  }, [value]);
   return ref;
+}
+
+/** Largest gift the form accepts in one go; bigger gifts are better arranged with us directly. */
+const MAX_GIFT = 100_000;
+
+/** Reads the "Other" box: digits with up to two decimals. A comma counts as the decimal point. */
+function parseAmount(raw: string): { text: string; amount: number; error: string } {
+  const text = raw.replace(",", ".").replace(/[^0-9.]/g, "");
+  if (text === "") return { text, amount: 0, error: "" };
+  if (!/^\d*\.?\d{0,2}$/.test(text)) return { text, amount: 0, error: "Please enter an amount like 40 or 40.50" };
+  const amount = Number(text);
+  if (!Number.isFinite(amount) || amount < 1) return { text, amount: 0, error: "The smallest gift we can take online is $1" };
+  if (amount > MAX_GIFT) return { text, amount: 0, error: `For gifts over ${usdWhole(MAX_GIFT)}, please contact us and we'll help you give` };
+  return { text, amount: Math.round(amount * 100) / 100, error: "" };
 }
 
 /* ===================================================================
@@ -157,14 +172,14 @@ export function Donate() {
                       ["Account number", bank.account],
                     ] as const
                   ).map(([label, value]) => (
-                    <div key={label} className="flex items-center justify-between gap-4 py-3">
-                      <div className="min-w-0">
-                        <dt className="text-[0.7rem] font-bold tracking-widest text-ink-soft uppercase">{label}</dt>
-                        <dd className="mt-0.5 font-semibold break-words tabular-nums">
-                          <T v={value} />
-                        </dd>
-                      </div>
-                      <CopyButton value={value} label={label} />
+                    <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 py-3">
+                      <dt className="text-[0.7rem] font-bold tracking-widest text-ink-soft uppercase">{label}</dt>
+                      <dd className="col-start-1 mt-0.5 font-semibold break-words tabular-nums">
+                        <T v={value} />
+                      </dd>
+                      <dd className="col-start-2 row-span-2 row-start-1">
+                        <CopyButton value={value} label={label} />
+                      </dd>
                     </div>
                   ))}
                 </dl>
@@ -207,7 +222,7 @@ export function WishlistLink({ className = "" }: { className?: string }) {
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => {
-        if (isDraft(links.amazonWishlist)) {
+        if (linkMissing(links.amazonWishlist)) {
           e.preventDefault();
           toast("Wish list link not set yet. Add links.amazonWishlist in src/content.ts");
         }
@@ -224,21 +239,25 @@ function DonateWidget() {
   const toast = useToast();
   const root = useRef<HTMLDivElement>(null);
   const [custom, setCustom] = useState("");
+  const [amountError, setAmountError] = useState("");
   const isPreset = custom === "" && give.presets.includes(d.amount);
   const impact = impactFor(d.amount);
   const amountRef = useTweenedMoney(d.amount);
 
   // When another section pre-fills the widget, mirror a non-preset amount into the "Other" field.
   useEffect(() => {
-    if (d.pulse) setCustom(give.presets.includes(d.amount) ? "" : String(d.amount));
+    if (!d.pulse) return;
+    setCustom(give.presets.includes(d.amount) || d.amount <= 0 ? "" : String(d.amount));
+    setAmountError("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [d.pulse]);
 
+  // Opacity only: the line is a live region, and hidden text isn't announced.
   useGSAP(
     () => {
-      gsap.fromTo(".impact-line", { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" });
+      gsap.fromTo(".impact-line", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" });
     },
-    { scope: root, dependencies: [textOf(impact), d.frequency] },
+    { scope: root, dependencies: [textOf(impact), d.frequency], revertOnUpdate: true },
   );
 
   useGSAP(
@@ -250,13 +269,13 @@ function DonateWidget() {
         { boxShadow: "0 0 0 26px rgba(200,147,58,0), 0 24px 48px rgba(27,42,36,0.14)", duration: 1.4, ease: "power2.out", delay: 0.9, repeat: 1 },
       );
     },
-    { dependencies: [d.pulse] },
+    { dependencies: [d.pulse], revertOnUpdate: true },
   );
 
   const submit = () => {
     if (d.amount <= 0) return toast("Choose an amount first");
-    if (isDraft(links.donate)) return toast("Donation page not connected yet. Add links.donate in src/content.ts");
-    window.open(textOf(links.donate), "_blank", "noopener,noreferrer");
+    if (linkMissing(links.donate)) return toast("Donation page not connected yet. Add links.donate in src/content.ts");
+    window.open(donateUrl(textOf(links.donate), d), "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -302,6 +321,7 @@ function DonateWidget() {
                 data-pop="1.07"
                 onClick={() => {
                   setCustom("");
+                  setAmountError("");
                   d.update({ amount: a });
                 }}
                 className={`rounded-2xl border-[1.5px] py-4 font-display text-xl font-semibold transition-colors duration-300 ${
@@ -313,8 +333,8 @@ function DonateWidget() {
             );
           })}
           <label
-            className={`col-span-3 flex items-center rounded-2xl border-[1.5px] bg-cream transition-[border-color,box-shadow] duration-300 sm:col-span-1 ${
-              !isPreset ? "border-forest shadow-[0_0_0_4px_rgb(31_90_70/0.12)]" : "border-line"
+            className={`col-span-3 flex items-center rounded-2xl border-[1.5px] bg-cream transition-[border-color,box-shadow] duration-300 focus-within:border-forest focus-within:shadow-[0_0_0_4px_rgb(31_90_70/0.22)] sm:col-span-1 ${
+              amountError ? "border-clay-ink" : !isPreset ? "border-forest shadow-[0_0_0_4px_rgb(31_90_70/0.12)]" : "border-line"
             }`}
           >
             <span className="pl-3 font-display text-xl font-semibold text-ink-soft sm:pl-4">$</span>
@@ -322,16 +342,23 @@ function DonateWidget() {
               inputMode="decimal"
               placeholder="Other"
               aria-label="Other amount in US dollars"
+              aria-invalid={amountError ? true : undefined}
+              aria-describedby="amount-error"
+              maxLength={9}
               value={custom}
               onChange={(e) => {
-                const v = e.target.value.replace(/[^0-9.]/g, "");
-                setCustom(v);
-                d.update({ amount: Math.round((Number(v) || 0) * 100) / 100 });
+                const { text, amount, error } = parseAmount(e.target.value);
+                setCustom(text);
+                setAmountError(error);
+                d.update({ amount });
               }}
               className="w-full min-w-0 bg-transparent py-4 pr-2 pl-1 font-display text-xl font-semibold outline-none placeholder:font-sans placeholder:text-base placeholder:font-medium placeholder:text-ink-soft"
             />
           </label>
         </div>
+        <p id="amount-error" role="status" className="mt-2 min-h-5 text-sm font-medium text-clay-ink empty:min-h-0">
+          {amountError}
+        </p>
       </fieldset>
 
       {/* Designation */}

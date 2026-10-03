@@ -70,14 +70,18 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
 function useScrollToWith(lenis: Lenis | null) {
   return useCallback(
     (id: string) => {
-      // "Top" is the start of the homepage, just past the opening splash.
-      if (id === "top") return scrollToTarget(lenis, document.getElementById("splash")?.offsetHeight ?? 0);
-      const el = document.getElementById(id);
-      if (!el) return;
-      scrollToTarget(lenis, el, () => {
+      const focus = (el: HTMLElement | null) => {
+        if (!el) return;
         if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
         el.focus({ preventScroll: true });
-      });
+      };
+      // "Top" is the start of the homepage, just past the opening splash.
+      if (id === "top") {
+        return scrollToTarget(lenis, document.getElementById("splash")?.offsetHeight ?? 0, () => focus(document.getElementById("main")));
+      }
+      const el = document.getElementById(id);
+      if (!el) return;
+      scrollToTarget(lenis, el, () => focus(el));
     },
     [lenis],
   );

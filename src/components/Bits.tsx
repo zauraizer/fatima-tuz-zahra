@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { Text } from "../content";
 import { textOf } from "../lib/draft";
 import { Icon } from "./Icon";
@@ -40,28 +40,44 @@ export function SectionHeading({
   );
 }
 
+/** Copies text to the clipboard. Resolves false if the browser refused. */
+export async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // Older browsers, or pages not served over https
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try {
+      ok = document.execCommand("copy");
+    } catch {
+      ok = false;
+    }
+    ta.remove();
+    return ok;
+  }
+}
+
 /** Copies a value to the clipboard with a toast + a check-mark morph. */
 export function CopyButton({ value, label, className = "" }: { value: Text; label: string; className?: string }) {
   const toast = useToast();
   const [copied, setCopied] = useState(false);
+  const timer = useRef(0);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
 
   const copy = async () => {
-    const text = textOf(value);
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.style.position = "fixed";
-      ta.style.opacity = "0";
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-    }
+    if (!(await copyText(textOf(value)))) return toast(`Couldn't copy. Please select the ${label.toLowerCase()} and copy it by hand`);
     setCopied(true);
     toast(`${label} copied`);
-    window.setTimeout(() => setCopied(false), 1800);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setCopied(false), 1800);
   };
 
   return (
