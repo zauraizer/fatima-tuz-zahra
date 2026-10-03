@@ -210,7 +210,6 @@ export const involved = {
   eyebrow: "Get involved",
   title: "More ways to stand with our children",
   lead: "Every kind of help matters: time, skills, supplies, or simply telling a friend.",
-  wishlist: ["School bags and stationery", "Winter coats", "Shoes", "Rice, flour and lentils", "Books", "Bedding", "Hygiene kits"],
   cards: [
     { key: "volunteer", title: "Volunteer", body: "Teach a class, coach a sport or share a skill. All volunteers go through a background check before working with children.", cta: "Offer your time", href: "#contact" },
     { key: "meal", title: "Sponsor a meal", body: "Mark a birthday, an Eid, or the memory of a loved one by providing a meal for all of our children.", cta: "Book a meal day", href: "#contact" },
