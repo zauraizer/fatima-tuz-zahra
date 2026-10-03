@@ -231,13 +231,15 @@ function DayScene() {
           </div>
 
           {/* ---------- Card ---------- */}
-          <div className="relative z-10 border-t border-line bg-cream px-5 pt-6 pb-22 lg:absolute lg:inset-y-0 lg:left-0 lg:flex lg:w-[min(46%,560px)] lg:items-center lg:border-0 lg:bg-transparent lg:p-0 lg:pl-[max(1.25rem,calc((100vw-1240px)/2+1.25rem))]">
-            <div className="w-full lg:rounded-[2rem] lg:border lg:border-white/60 lg:bg-white/72 lg:p-10 lg:shadow-lift lg:backdrop-blur-xl">
+          {/* On desktop the card has its own width, lined up with the page's content edge, so it never gets squeezed on wide screens. */}
+          <div className="relative z-10 border-t border-line bg-cream px-5 pt-6 pb-22 lg:absolute lg:inset-y-0 lg:left-0 lg:flex lg:items-center lg:border-0 lg:bg-transparent lg:p-0 lg:pl-[max(1.25rem,calc((100vw-1240px)/2+1.25rem))]">
+            <div className="w-full lg:w-[min(30rem,42vw)] lg:rounded-[2rem] lg:border lg:border-white/60 lg:bg-white/72 lg:p-10 lg:shadow-lift lg:backdrop-blur-xl">
               <p className="eyebrow">{day.eyebrow}</p>
               <p className="mt-3 font-display text-[clamp(1.7rem,2vw+1rem,2.6rem)] leading-tight font-semibold">{day.title}</p>
-              <div className="relative mt-6 h-[8.5rem] lg:mt-8 lg:h-[9.5rem]">
+              {/* The steps are stacked in one grid cell, so the box is always as tall as the longest step. */}
+              <div className="mt-6 grid lg:mt-8">
                 {steps.map((s) => (
-                  <div key={s.title} className="day-step absolute inset-0">
+                  <div key={s.title} className="day-step col-start-1 row-start-1">
                     <p className="text-[0.75rem] font-bold tracking-[0.16em] text-gold-ink uppercase">{s.time}</p>
                     <p className="mt-1.5 font-display text-2xl font-semibold">{s.title}</p>
                     <p className="mt-2 leading-relaxed text-ink-soft">{s.body}</p>
@@ -245,10 +247,10 @@ function DayScene() {
                 ))}
               </div>
               <div className="mt-4 flex items-center gap-4">
-                <span className="day-count font-display text-sm font-semibold tabular-nums">
+                <span className="day-count font-display text-sm font-semibold whitespace-nowrap tabular-nums">
                   1 of {steps.length}
                 </span>
-                <div className="flex gap-1.5">
+                <div className="flex shrink-0 gap-1.5">
                   {steps.map((s, i) => (
                     <span
                       key={s.title}
