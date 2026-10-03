@@ -252,10 +252,6 @@ export const faq = [
     q: "How do you keep the children safe?",
     a: ["Every staff member and volunteer goes through a background check, and we never share children's full names, photos or locations without consent."] as Rich,
   },
-  {
-    q: "Can I donate goods instead of money?",
-    a: ["Absolutely. Our wish list shows what we need most right now, or contact us to arrange a drop off."] as Rich,
-  },
 ];
 
 /** Plain-language privacy notice (opens from the footer). Have it reviewed before launch. */
