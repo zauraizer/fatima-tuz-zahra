@@ -1,0 +1,14 @@
+{
+  "name": "Fatima tuz Zahra Orphanage",
+  "short_name": "Fatima tuz Zahra",
+  "description": "A home, a family and a future for children who have lost theirs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf7ef",
+  "theme_color": "#143d30",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
