@@ -36,7 +36,7 @@ export const site = {
 */
 export const taxExempt = {
   ein: "",
-  note: "Fatima tuz Zahra is a 501(c)(3) nonprofit. Donations are tax-deductible to the extent allowed by law.",
+  note: "Fatima tuz Zahra is a 501(c)(3) nonprofit. Donations are tax deductible to the extent allowed by law.",
 };
 export const isTaxExempt = taxExempt.ein.trim() !== "";
 
@@ -63,7 +63,7 @@ export const contact = {
   email: draft("info@example.org"),
   phone: draft("(000) 000-0000"),
   address: draft("[Street, city, state, ZIP]"),
-  hours: draft("[e.g. Mon–Sat, 10am–5pm]"),
+  hours: draft("[for example, Monday to Saturday, 10am to 5pm]"),
   /** Google Maps → Share → Embed a map → copy only the src="…" URL. */
   mapEmbed: "",
 };
@@ -92,14 +92,14 @@ export const hero = {
   /** Painted with the animated gradient. */
   titleAccent: "every child.",
   lead: "We care for orphaned and vulnerable children with everything a family gives: a safe place to sleep, warm meals, school every morning, and adults who stay.",
-  assurances: ["Zakat eligible", "Sadaqah & Lillah", "Monthly sponsorship"],
+  assurances: ["Zakat eligible", "Sadaqah and Lillah", "Monthly sponsorship"],
   cards: ["A safe home, every night", "School every morning"],
 };
 
 export const stats: { n: Num; suffix?: string; label: string }[] = [
   { n: { value: 40, draft: true }, label: "children in our care" },
   { n: { value: 10, draft: true }, label: "years serving our community" },
-  { n: { value: 100, draft: true }, suffix: "%", label: "of school-age children enrolled" },
+  { n: { value: 100, draft: true }, suffix: "%", label: "of school age children enrolled" },
   { n: { value: 43800, draft: true }, label: "meals served each year" },
 ];
 
@@ -118,21 +118,21 @@ export const story = {
       draft("[One or two sentences on who founded it and why.]"),
     ],
     [
-      "Our name honors Sayyida Fatima al-Zahra, daughter of the Prophet Muhammad ﷺ, remembered across generations for her generosity to the poor and the orphan. We raise our children in that same spirit — with dignity, warmth and faith.",
+      "Our name honors Sayyida Fatima al Zahra, daughter of the Prophet Muhammad ﷺ, remembered across generations for her generosity to the poor and the orphan. We raise our children in that same spirit, with dignity, warmth and faith.",
     ],
   ] as Rich[],
   values: [
     { title: "Safety", body: "A secure home with caring adults present day and night." },
-    { title: "Education", body: "School, tutoring and books — the surest road to independence." },
-    { title: "Faith & character", body: "Prayer, Quran and good manners woven into everyday life." },
-    { title: "Belonging", body: "Brothers and sisters, celebrations and traditions — a real family." },
+    { title: "Education", body: "School, tutoring and books are the surest road to independence." },
+    { title: "Faith and character", body: "Prayer, Quran and good manners woven into everyday life." },
+    { title: "Belonging", body: "Brothers and sisters, celebrations and traditions. A real family." },
   ],
-  badge: "A home for every child · Fatima tuz Zahra · ",
+  badge: "A home for every child   Fatima tuz Zahra   ",
 };
 
 /** Scroll-highlighted statement. Words in `accent` are painted gold. */
 export const statement = {
-  text: "Every child who walks through our door finds a bed, a warm meal, a school to go to — and people who stay.",
+  text: "Every child who walks through our door finds a bed, a warm meal, a school to go to, and people who stay.",
   accent: ["bed,", "meal,", "school", "stay."],
 };
 
@@ -143,9 +143,9 @@ export const care = {
   items: [
     { icon: "home", title: "A safe home", body: "Clean rooms, warm bedding and caregivers on hand around the clock." },
     { icon: "school", title: "Education", body: "Every child goes to school, with homework help and tutoring each afternoon." },
-    { icon: "health", title: "Health & nutrition", body: "Three nourishing meals a day, regular check-ups and medical care when needed." },
-    { icon: "book", title: "Faith & character", body: "Quran lessons, daily prayer and the everyday manners that build good character." },
-    { icon: "ball", title: "Play & wellbeing", body: "Sports, games, art and outings — time to simply be a child." },
+    { icon: "health", title: "Health and nutrition", body: "Three nourishing meals a day, regular checkups and medical care when needed." },
+    { icon: "book", title: "Faith and character", body: "Quran lessons, daily prayer and the everyday manners that build good character." },
+    { icon: "ball", title: "Play and wellbeing", body: "Sports, games, art and outings. Time to simply be a child." },
     { icon: "tools", title: "Skills for life", body: "Vocational training and guidance so older children leave ready to stand on their own." },
   ],
 } as const;
@@ -155,19 +155,19 @@ export const day = {
   title: "A day at Fatima tuz Zahra",
   lead: "Routine gives children security. Scroll through an ordinary day.",
   steps: [
-    { time: "Dawn", title: "Fajr & breakfast", body: "Morning prayer, breakfast together, and off to school in clean uniforms." },
-    { time: "Midday", title: "School & lunch", body: "A full school day, then home for a hot lunch and a short rest." },
-    { time: "Afternoon", title: "Homework & Quran", body: "Homework club with tutors, followed by Quran class." },
+    { time: "Dawn", title: "Fajr and breakfast", body: "Morning prayer, breakfast together, and off to school in clean uniforms." },
+    { time: "Midday", title: "School and lunch", body: "A full school day, then home for a hot lunch and a short rest." },
+    { time: "Afternoon", title: "Homework and Quran", body: "Homework club with tutors, followed by Quran class." },
     { time: "Late afternoon", title: "Play", body: "Cricket, soccer, games and free time outdoors." },
     { time: "Evening", title: "Dinner as a family", body: "Maghrib, then dinner around one table and time to talk about the day." },
-    { time: "Night", title: "Rest", body: "Isha, a bedtime story, and lights out — with a caregiver close by." },
+    { time: "Night", title: "Rest", body: "Isha, a bedtime story, and lights out, with a caregiver close by." },
   ],
 };
 
 export const verse = {
   arabic: "وَيُطْعِمُونَ ٱلطَّعَامَ عَلَىٰ حُبِّهِۦ مِسْكِينًا وَيَتِيمًا وَأَسِيرًا",
   translation: "They give food, though they love it themselves, to the poor, the orphan and the captive.",
-  reference: "Surah al-Insan 76:8 — a verse traditionally linked to the household of Fatima al-Zahra.",
+  reference: "Surah Al Insan 76:8. A verse traditionally linked to the household of Fatima al Zahra.",
 };
 
 export const sponsorship = {
@@ -177,7 +177,7 @@ export const sponsorship = {
   steps: [
     { title: "Choose your monthly gift", body: "Sponsorship covers one child's food, schooling and care, month after month." },
     { title: "We match you with a child", body: "You'll be paired with a child in our care. To protect their privacy, profiles are never published online." },
-    { title: "Watch them grow", body: "Receive updates through the year — school progress, milestones and notes from the home." },
+    { title: "Watch them grow", body: "Receive updates through the year: school progress, milestones and notes from the home." },
   ],
 };
 
@@ -186,7 +186,7 @@ export type Designation = "General" | "Zakat" | "Sadaqah" | "Lillah" | "Sponsors
 export const give = {
   eyebrow: "Give",
   title: "Your gift becomes a childhood",
-  lead: "Give once or every month. Choose where it goes — and see what it makes possible.",
+  lead: "Give once or every month. Choose where it goes and see what it makes possible.",
   presets: [25, 100, 500],
   defaultAmount: 100,
   designations: ["General", "Zakat", "Sadaqah", "Lillah", "Sponsorship"] as Designation[],
@@ -209,37 +209,37 @@ export const give = {
 export const involved = {
   eyebrow: "Get involved",
   title: "More ways to stand with our children",
-  lead: "Every kind of help matters — time, skills, supplies, or simply telling a friend.",
-  wishlist: ["School bags & stationery", "Winter coats", "Shoes", "Rice, flour & lentils", "Books", "Bedding", "Hygiene kits"],
+  lead: "Every kind of help matters: time, skills, supplies, or simply telling a friend.",
+  wishlist: ["School bags and stationery", "Winter coats", "Shoes", "Rice, flour and lentils", "Books", "Bedding", "Hygiene kits"],
   cards: [
     { key: "volunteer", title: "Volunteer", body: "Teach a class, coach a sport or share a skill. All volunteers go through a background check before working with children.", cta: "Offer your time", href: "#contact" },
     { key: "meal", title: "Sponsor a meal", body: "Mark a birthday, an Eid, or the memory of a loved one by providing a meal for all of our children.", cta: "Book a meal day", href: "#contact" },
     { key: "fundraise", title: "Start a fundraiser", body: "Turn a birthday, Ramadan challenge or a 5K into support for our children.", cta: "Start fundraising", href: "fundraiser" },
-    { key: "match", title: "Double your gift", body: "Many US employers match charitable donations. Ask your HR team — it can double your impact at no cost to you.", cta: "Ask us for a match letter", href: "#contact" },
+    { key: "match", title: "Double your gift", body: "Many US employers match charitable donations. Ask your HR team. It can double your impact at no cost to you.", cta: "Ask us for a match letter", href: "#contact" },
   ],
 };
 
 export const faq = [
   {
-    q: "Is my donation tax-deductible?",
+    q: "Is my donation tax deductible?",
     a: (isTaxExempt
       ? [taxExempt.note, " You'll receive an email receipt for your records. Our EIN is ", taxExempt.ein, "."]
       : [
           draft(
-            "Our nonprofit registration isn't complete yet, so we can't confirm tax-deductibility at the moment. We'll update this page as soon as it is. Every gift still gets an email receipt.",
+            "Our nonprofit registration isn't complete yet, so we can't confirm tax deductibility at the moment. We'll update this page as soon as it is. Every gift still gets an email receipt.",
           ),
         ]) as Rich,
   },
   {
     q: "Can I give my Zakat to Fatima tuz Zahra?",
     a: [
-      "Yes. Orphaned and needy children are among those eligible to receive Zakat. Choose “Zakat” when you give so it's directed accordingly. ",
-      draft("[Describe how Zakat funds are handled, e.g. kept in a separate fund.]"),
+      "Yes. Orphaned and needy children are among those eligible to receive Zakat. Choose Zakat when you give so it goes to the right place. ",
+      draft("[Describe how Zakat funds are handled, for example kept in a separate fund.]"),
     ] as Rich,
   },
   {
     q: "How much of my donation reaches the children?",
-    a: [draft("[e.g. 90 cents of every dollar goes directly to the children's care, education and health.]")] as Rich,
+    a: [draft("[For example, 90 cents of every dollar goes directly to the children's care, education and health.]")] as Rich,
   },
   {
     q: "Can I sponsor a specific child?",
@@ -247,7 +247,7 @@ export const faq = [
   },
   {
     q: "Can I visit the home?",
-    a: ["Yes — visitors are welcome during visiting hours (", contact.hours, "). Please call ahead so we can show you around."] as Rich,
+    a: ["Yes, visitors are welcome during visiting hours: ", contact.hours, ". Please call ahead so we can show you around."] as Rich,
   },
   {
     q: "How do you keep the children safe?",
@@ -255,7 +255,7 @@ export const faq = [
   },
   {
     q: "Can I donate goods instead of money?",
-    a: ["Absolutely. Our wish list shows what we need most right now, or contact us to arrange a drop-off."] as Rich,
+    a: ["Absolutely. Our wish list shows what we need most right now, or contact us to arrange a drop off."] as Rich,
   },
 ];
 
@@ -265,7 +265,7 @@ export const privacy = {
   sections: [
     {
       title: "What we collect",
-      body: [draft("When you contact us or join our newsletter, we collect what you give us — your name, email, phone number (if provided) and your message — and use it only to reply to you or send the updates you asked for.")] as Rich,
+      body: [draft("When you contact us or join our newsletter, we collect what you give us: your name, email, phone number if you share it, and your message. We use it only to reply to you or send the updates you asked for.")] as Rich,
     },
     {
       title: "Donations",

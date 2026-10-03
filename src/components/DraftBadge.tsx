@@ -57,7 +57,7 @@ export function DraftBadge() {
     <div className="fixed bottom-4 left-4 z-[80] flex items-center gap-1 rounded-full bg-ink p-1 pl-4 text-[0.82rem] font-semibold text-cream shadow-lift">
       <span className="size-2 rounded-full bg-gold shadow-[0_0_0_4px_rgb(200_147_58/0.3)]" aria-hidden="true" />
       <span className="ml-1.5 mr-2">
-        Draft · {count} to fill in
+        Draft: {count} to fill in
       </span>
       <button
         type="button"

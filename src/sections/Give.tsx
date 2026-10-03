@@ -74,7 +74,7 @@ export function Sponsorship() {
           center
           lead={
             <>
-              For <DraftNum n={monthly}>{usd(monthly.value)}</DraftNum> a month, you cover everything one child needs — and you get to watch them grow.
+              For <DraftNum n={monthly}>{usd(monthly.value)}</DraftNum> a month, you cover everything one child needs, and you get to watch them grow.
             </>
           }
         />
@@ -109,7 +109,7 @@ export function Sponsorship() {
               onClick={() => prefill({ frequency: "monthly", amount: monthly.value, designation: "Sponsorship" })}
               className="btn btn-primary group min-h-14 px-8 text-lg"
             >
-              Become a sponsor<span className="hidden sm:inline"> · {usd(monthly.value)}/month</span>
+              Become a sponsor<span className="hidden sm:inline">&nbsp;for {usd(monthly.value)} a month</span>
               <Icon name="arrow" className="size-5 transition-transform duration-500 group-hover:translate-x-1" strokeWidth={2.2} />
             </button>
           </Magnetic>
@@ -147,7 +147,7 @@ export function Donate() {
           <div data-reveal className="mt-10">
             <p className="eyebrow">Other ways to give</p>
             <div className="mt-3 border-t border-line">
-              <Collapsible title="Bank transfer (ACH / wire)" icon="bank">
+              <Collapsible title="Bank transfer" icon="bank">
                 <dl className="divide-y divide-line rounded-2xl bg-white px-4 shadow-soft">
                   {(
                     [
@@ -209,7 +209,7 @@ export function WishlistLink({ className = "" }: { className?: string }) {
       onClick={(e) => {
         if (isDraft(links.amazonWishlist)) {
           e.preventDefault();
-          toast("Wish list link not set yet — add links.amazonWishlist in src/content.ts");
+          toast("Wish list link not set yet. Add links.amazonWishlist in src/content.ts");
         }
       }}
       className={`btn btn-ghost min-h-11 px-5 text-sm ${className}`}
@@ -255,7 +255,7 @@ function DonateWidget() {
 
   const submit = () => {
     if (d.amount <= 0) return toast("Choose an amount first");
-    if (isDraft(links.donate)) return toast("Donation page not connected yet — add links.donate in src/content.ts");
+    if (isDraft(links.donate)) return toast("Donation page not connected yet. Add links.donate in src/content.ts");
     window.open(textOf(links.donate), "_blank", "noopener,noreferrer");
   };
 
@@ -283,14 +283,14 @@ function DonateWidget() {
               d.frequency === f ? "text-white" : "text-ink-soft hover:text-ink"
             }`}
           >
-            {f === "monthly" ? "Monthly" : "One-time"}
+            {f === "monthly" ? "Monthly" : "One time"}
           </button>
         ))}
       </div>
 
       {/* Amount */}
       <fieldset className="relative mt-8">
-        <legend className="text-sm font-semibold">Amount (USD)</legend>
+        <legend className="text-sm font-semibold">Amount in US dollars</legend>
         <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
           {give.presets.map((a) => {
             const on = isPreset && d.amount === a;
@@ -379,7 +379,7 @@ function DonateWidget() {
       <p className="mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-xs text-ink-soft">
         <Icon name="lock" className="size-3.5" strokeWidth={2.2} />
         <T v={links.donatePlatform} />
-        {d.designation !== "General" && <span>· Designated: {d.designation}</span>}
+        {d.designation !== "General" && <span>Giving to {d.designation}</span>}
       </p>
     </div>
   );

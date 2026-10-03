@@ -58,7 +58,7 @@ export function Contact() {
 
     if (!forms.contactEndpoint) {
       // No form service yet: open the visitor's email app with the message filled in.
-      const body = `Name: ${payload.name}\nEmail: ${payload.email}\nPhone: ${payload.phone || "—"}\nTopic: ${topic}\n\n${payload.message || ""}`;
+      const body = `Name: ${payload.name}\nEmail: ${payload.email}\nPhone: ${payload.phone || "none given"}\nTopic: ${topic}\n\n${payload.message || ""}`;
       window.location.href = `mailto:${textOf(contact.email)}?subject=${encodeURIComponent(`Website enquiry: ${topic}`)}&body=${encodeURIComponent(body)}`;
       setStatus("sent");
       return;
@@ -84,7 +84,7 @@ export function Contact() {
       <div className="mx-auto grid max-w-[1240px] items-start gap-14 px-5 lg:grid-cols-2 lg:gap-20">
         <div>
           <SectionHeading
-            eyebrow="Visit & contact"
+            eyebrow="Visit and contact"
             title="Come and meet our family"
             lead="Visitors are always welcome during visiting hours. Please call ahead so we can show you around."
           />
@@ -126,7 +126,7 @@ export function Contact() {
               </svg>
               <p className="ok-text mt-6 font-display text-3xl font-semibold">Thank you</p>
               <p className="ok-text mt-2 max-w-xs text-ink-soft">
-                {forms.contactEndpoint ? "Your message is on its way. We'll be in touch soon." : "Your email app should have opened with your message — just press send."}
+                {forms.contactEndpoint ? "Your message is on its way. We'll be in touch soon." : "Your email app should have opened with your message. Just press send."}
               </p>
               <button type="button" onClick={() => setStatus("idle")} className="ok-text btn btn-ghost mt-8 min-h-11 px-5 text-sm">
                 Send another message
@@ -138,7 +138,7 @@ export function Contact() {
               <input type="text" name="_gotcha" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
 
               <fieldset className="mt-6">
-                <legend className="text-sm font-semibold">I'd like to…</legend>
+                <legend className="text-sm font-semibold">I would like to</legend>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {TOPICS.map((t) => (
                     <button
@@ -176,7 +176,7 @@ export function Contact() {
               </p>
               <Magnetic className="mt-2 block w-full" strength={0.12}>
                 <button type="submit" disabled={status === "sending"} className="btn btn-primary group min-h-14 w-full disabled:opacity-60">
-                  {status === "sending" ? "Sending…" : "Send message"}
+                  {status === "sending" ? "Sending" : "Send message"}
                   <Icon name="arrow" className="size-4 transition-transform duration-500 group-hover:translate-x-1" strokeWidth={2.2} />
                 </button>
               </Magnetic>

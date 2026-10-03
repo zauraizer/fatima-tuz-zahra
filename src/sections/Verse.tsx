@@ -62,7 +62,7 @@ export function Verse() {
           ))}
         </p>
         <blockquote data-reveal="words" data-delay="0.6" className="mt-8 font-display text-[clamp(1.35rem,1.5vw+1rem,2.1rem)] leading-snug font-normal italic">
-          “{verse.translation}”
+          {verse.translation}
         </blockquote>
         <p data-reveal="fade" data-delay="0.9" className="mt-7 text-[0.92rem] text-cream/70">
           {verse.reference}

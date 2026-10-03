@@ -42,7 +42,7 @@ export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
               <span className="font-display text-xl font-semibold">{site.name}</span>
             </a>
             <p className="mt-5 max-w-xs leading-relaxed">{site.tagline}</p>
-            {isTaxExempt && <p className="mt-4 text-sm text-cream/55">501(c)(3) nonprofit · EIN {taxExempt.ein}</p>}
+            {isTaxExempt && <p className="mt-4 text-sm text-cream/55">501(c)(3) nonprofit, EIN {taxExempt.ein}</p>}
           </div>
 
           <nav aria-label="Footer">
@@ -130,7 +130,7 @@ function Newsletter() {
     e.preventDefault();
     const email = new FormData(e.currentTarget).get("email")?.toString().trim();
     if (!email) return toast("Add your email first");
-    if (!forms.newsletterEndpoint) return toast("Newsletter not connected yet — add forms.newsletterEndpoint in src/content.ts");
+    if (!forms.newsletterEndpoint) return toast("Newsletter not connected yet. Add forms.newsletterEndpoint in src/content.ts");
     try {
       const res = await fetch(forms.newsletterEndpoint, {
         method: "POST",
@@ -140,7 +140,7 @@ function Newsletter() {
       if (!res.ok) throw new Error();
       setDone(true);
     } catch {
-      toast("Couldn't subscribe right now — please try again later");
+      toast("Couldn't subscribe right now. Please try again later");
     }
   };
 

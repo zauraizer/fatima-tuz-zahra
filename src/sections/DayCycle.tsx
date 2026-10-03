@@ -34,7 +34,6 @@ const PHASES: Phase[] = [
   { top: "#0b1c29", bottom: "#1c3947", horizon: "rgba(90,150,180,0.18)", sun: "#ef6c43", p: 1.06, sunAlpha: 0, clouds: 0, stars: 1, moon: 1, windows: 1 }, // night
 ];
 
-const pad = (n: number) => String(n).padStart(2, "0");
 
 export function DayCycle() {
   return useReducedMotion() ? <DayList /> : <DayScene />;
@@ -100,7 +99,7 @@ function DayScene() {
         for (let i = 1; i < steps.length; i++) if (t >= i - 1 + 0.7) idx = i;
         if (idx !== lastIdx) {
           lastIdx = idx;
-          counter.textContent = `${pad(idx + 1)} / ${pad(steps.length)}`;
+          counter.textContent = `${idx + 1} of ${steps.length}`;
           dots.forEach((d, i) => d.toggleAttribute("data-on", i <= idx));
         }
         bar.style.transform = `scaleX(${tl?.progress() ?? 0})`;
@@ -247,7 +246,7 @@ function DayScene() {
               </div>
               <div className="mt-4 flex items-center gap-4">
                 <span className="day-count font-display text-sm font-semibold tabular-nums">
-                  01 / {pad(steps.length)}
+                  1 of {steps.length}
                 </span>
                 <div className="flex gap-1.5">
                   {steps.map((s, i) => (
