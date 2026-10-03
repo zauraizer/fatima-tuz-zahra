@@ -238,7 +238,7 @@ export const faq = [
   },
   {
     q: "How much of my donation reaches the children?",
-    a: [draft("[For example, 90 cents of every dollar goes directly to the children's care, education and health.]")] as Rich,
+    a: ["All of it. 100% of your donation goes directly to the children, paying for their home, meals, schooling and health care."] as Rich,
   },
   {
     q: "Can I sponsor a specific child?",
