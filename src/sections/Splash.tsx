@@ -108,7 +108,7 @@ export function Splash() {
             <span className="block size-1.5 animate-scroll-dot rounded-full bg-gold-bright" />
           </span>
           Scroll to enter
-          <Icon name="chevronDown" className="size-4 animate-bounce" strokeWidth={2.2} />
+          <Icon name="chevronDown" className="size-4 animate-bounce" />
         </button>
       </div>
     </section>

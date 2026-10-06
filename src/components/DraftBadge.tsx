@@ -64,7 +64,7 @@ export function DraftBadge() {
         onClick={next}
         className="inline-flex items-center gap-1 rounded-full bg-cream/10 px-3 py-1.5 transition-colors hover:bg-cream/20"
       >
-        Next <Icon name="arrow" className="size-3.5" strokeWidth={2.2} />
+        Next <Icon name="arrow" className="size-3.5" />
       </button>
       <button
         type="button"

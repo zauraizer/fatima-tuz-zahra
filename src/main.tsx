@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "@phosphor-icons/web/regular";
 import "@fontsource-variable/lora";
 import "@fontsource-variable/lora/wght-italic.css";
 import "@fontsource-variable/plus-jakarta-sans";

@@ -192,7 +192,7 @@ export function Header() {
           <div className="flex items-center gap-2">
             <Magnetic className="hidden sm:inline-block">
               <a href="#give" className="btn btn-gold min-h-11 px-5 text-[0.95rem]">
-                <Icon name="heart" className="size-4" strokeWidth={2.2} />
+                <Icon name="heart" className="size-4" />
                 Donate
               </a>
             </Magnetic>
@@ -238,7 +238,7 @@ export function Header() {
           </ul>
           <div className="menu-item mt-10">
             <a href="#give" className="btn btn-gold w-full">
-              <Icon name="heart" className="size-4" strokeWidth={2.2} />
+              <Icon name="heart" className="size-4" />
               Donate now
             </a>
           </div>

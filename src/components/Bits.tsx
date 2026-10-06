@@ -90,7 +90,7 @@ export function CopyButton({ value, label, className = "" }: { value: Text; labe
         copied ? "border-forest bg-forest text-white" : "border-line bg-cream text-forest hover:border-forest"
       } ${className}`}
     >
-      <Icon name={copied ? "check" : "copy"} className="size-3.5" strokeWidth={2.2} />
+      <Icon name={copied ? "check" : "copy"} className="size-3.5" />
       {copied ? "Copied" : "Copy"}
     </button>
   );

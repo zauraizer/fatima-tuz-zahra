@@ -43,9 +43,7 @@ export function Involved() {
             const target = external ? links[c.href as keyof typeof links] : null;
             return (
               <SpotlightCard key={c.key} data-reveal data-pop className="flex flex-col rounded-3xl border border-line bg-white p-8 transition-shadow duration-500 hover:shadow-pop">
-                <span data-pop-icon className="relative grid size-12 place-items-center rounded-2xl bg-forest-soft text-forest">
-                  <Icon name={CARD_ICONS[c.key]} className="size-6" draw />
-                </span>
+                <Icon data-pop-icon name={CARD_ICONS[c.key]} className="relative size-8 text-forest" />
                 <h3 className="relative mt-5 text-xl">{c.title}</h3>
                 <p className="relative mt-2 flex-1 leading-relaxed text-ink-soft">{c.body}</p>
                 <a
@@ -61,7 +59,7 @@ export function Involved() {
                   className="group/link relative mt-6 inline-flex items-center gap-2 font-semibold text-forest"
                 >
                   {c.cta}
-                  <Icon name="arrow" className="size-4 transition-transform duration-500 group-hover/link:translate-x-1" strokeWidth={2.2} />
+                  <Icon name="arrow" className="size-4 transition-transform duration-500 group-hover/link:translate-x-1" />
                 </a>
               </SpotlightCard>
             );
@@ -74,16 +72,14 @@ export function Involved() {
             className={`flex flex-col gap-6 rounded-3xl border border-gold/40 bg-gold-soft p-8 transition-shadow duration-500 hover:shadow-pop md:flex-row md:items-center md:justify-between md:p-10 ${layout.banner}`}
           >
             <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
-              <span data-pop-icon className="grid size-14 shrink-0 place-items-center rounded-2xl bg-gold-bright text-forest-deep">
-                <Icon name="share" className="size-7" draw />
-              </span>
+              <Icon data-pop-icon name="share" className="size-8 shrink-0 text-forest-deep" />
               <div>
                 <h3 className="text-2xl">Spread the word</h3>
                 <p className="mt-1.5 max-w-xl leading-relaxed text-ink-soft">Tell one friend about our children. Every new supporter starts with a conversation.</p>
               </div>
             </div>
             <button type="button" onClick={share} className="btn btn-primary relative shrink-0 self-start md:self-center">
-              <Icon name="share" className="size-4" strokeWidth={2} /> Share this page
+              <Icon name="share" className="size-4" /> Share this page
             </button>
           </SpotlightCard>
         </div>

@@ -9,7 +9,7 @@ import { useReducedMotion } from "../lib/hooks";
 
 const STAT_ICONS: IconName[] = ["users", "clock", "school", "meal"];
 
-/** Glass tiles on deep green; numbers count up in gold gradient. */
+/** Open icons on deep green; numbers count up in gold gradient. */
 export function Stats() {
   return (
     <section aria-label="Our work in numbers" className="relative overflow-hidden bg-forest-deep py-16 text-cream md:py-20">
@@ -23,9 +23,7 @@ export function Stats() {
               data-pop
               className="h-full rounded-[1.75rem] border border-cream/10 bg-cream/[0.045] p-7 transition-[border-color,background-color] duration-500 hover:border-gold-bright/40 hover:bg-cream/[0.07]"
             >
-              <span data-pop-icon className="relative grid size-11 place-items-center rounded-2xl bg-gold-bright/15 text-gold-bright">
-                <Icon name={STAT_ICONS[i % STAT_ICONS.length]} className="size-5.5" strokeWidth={1.9} />
-              </span>
+              <Icon data-pop-icon name={STAT_ICONS[i % STAT_ICONS.length]} className="size-7 text-gold-bright" />
               <p className="text-gold-gradient relative mt-8 font-display text-[clamp(2.8rem,3.4vw+1rem,4.2rem)] leading-none font-semibold">
                 <DraftNum n={s.n}>
                   <Counter value={s.n.value} suffix={s.suffix} />
@@ -73,7 +71,7 @@ export function ValuesMarquee() {
           data-pop="1.1"
           className="absolute top-1 right-3 z-10 grid size-9 place-items-center rounded-full border border-line bg-cream/90 text-forest transition-colors hover:border-forest md:top-3 md:right-5"
         >
-          <Icon name={paused ? "play" : "pause"} className="size-4" strokeWidth={2.2} />
+          <Icon name={paused ? "play" : "pause"} className="size-4" />
         </button>
       )}
     </section>

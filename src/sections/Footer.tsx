@@ -109,7 +109,7 @@ export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
             </button>
           </p>
           <a href="#top" className="-my-2 inline-flex items-center gap-1.5 py-2 transition-colors hover:text-gold-soft">
-            Back to top <Icon name="arrowUp" className="size-4" strokeWidth={2} />
+            Back to top <Icon name="arrowUp" className="size-4" />
           </a>
         </div>
       </div>
@@ -162,7 +162,7 @@ function Newsletter() {
       </div>
       {done ? (
         <p ref={thanks} tabIndex={-1} role="status" className="flex items-center gap-3 text-lg text-cream outline-none">
-          <Icon name="check" className="size-6 text-gold" strokeWidth={2.4} /> You're on the list. Thank you!
+          <Icon name="check" className="size-6 text-gold" /> You're on the list. Thank you!
         </p>
       ) : (
         <form
@@ -225,7 +225,7 @@ export function BackToTop() {
         <circle cx="28" cy="28" r="26" fill="none" stroke="var(--color-line)" strokeWidth="2" />
         <circle ref={ring} cx="28" cy="28" r="26" fill="none" stroke="var(--color-gold)" strokeWidth="2.5" strokeLinecap="round" pathLength={1} strokeDasharray="1" strokeDashoffset="1" />
       </svg>
-      <Icon name="arrowUp" className="relative size-5" strokeWidth={2.2} />
+      <Icon name="arrowUp" className="relative size-5" />
     </button>
   );
 }

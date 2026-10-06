@@ -30,18 +30,14 @@ export function Collapsible({
         data-pop-lift="0"
         className={`group flex w-full items-center gap-4 text-left ${size === "lg" ? "py-6" : "py-5"}`}
       >
-        {icon && (
-          <span data-pop-icon className="grid size-11 shrink-0 place-items-center rounded-xl border border-line bg-cream text-forest transition-colors duration-300 group-hover:border-forest">
-            <Icon name={icon} className="size-5" />
-          </span>
-        )}
+        {icon && <Icon data-pop-icon name={icon} className="size-6 text-forest transition-colors duration-300 group-hover:text-forest-deep" />}
         <span className={`flex-1 font-display font-semibold ${size === "lg" ? "text-xl md:text-[1.4rem]" : "text-lg"}`}>{title}</span>
         <span
           className={`grid size-9 shrink-0 place-items-center rounded-full border transition-all duration-500 ease-out-expo ${
             open ? "rotate-[135deg] border-forest bg-forest text-white" : "border-line text-forest group-hover:border-forest"
           }`}
         >
-          <Icon name="plus" className="size-4" strokeWidth={2.2} />
+          <Icon name="plus" className="size-4" />
         </span>
       </button>
       <div

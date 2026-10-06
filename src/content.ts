@@ -224,7 +224,7 @@ export const give = {
     { icon: "lock", text: "Secure, encrypted checkout" },
     { icon: "receipt", text: "Instant email receipt" },
     { icon: "heart", text: "Zakat directed to eligible children" },
-  ],
+  ] as const,
 };
 
 export const involved = {

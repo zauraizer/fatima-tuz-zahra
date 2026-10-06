@@ -37,7 +37,7 @@ export function Story() {
             </div>
             {site.draftMode ? (
               <div className="relative grid h-full place-content-center justify-items-center gap-4 p-10 text-center text-ink-soft">
-                <Icon name="camera" className="size-12 text-gold" draw />
+                <Icon name="camera" className="size-12 text-gold" />
                 <p className="text-[0.95rem]">
                   Add a photo of the home, like the entrance, courtyard or a classroom.
                   <small className="mt-2 block opacity-80">Avoid showing children's faces unless you have consent.</small>

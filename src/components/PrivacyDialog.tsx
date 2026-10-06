@@ -60,7 +60,7 @@ export function PrivacyDialog({ open, onClose }: { open: boolean; onClose: () =>
           className="absolute top-5 right-5 grid size-10 place-items-center rounded-full border border-line bg-white text-forest transition-colors hover:border-forest"
           data-pop="1.1"
         >
-          <Icon name="plus" className="size-4 rotate-45" strokeWidth={2.2} />
+          <Icon name="plus" className="size-4 rotate-45" />
         </button>
         <p className="eyebrow">Privacy</p>
         <h2 id="privacy-title" className="mt-4 text-[clamp(1.9rem,2vw+1rem,2.6rem)]">

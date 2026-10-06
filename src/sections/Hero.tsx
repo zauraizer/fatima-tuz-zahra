@@ -132,7 +132,7 @@ export function Hero() {
             <Magnetic>
               <a href="#sponsor" className="btn btn-primary group">
                 Sponsor a child
-                <Icon name="arrow" className="size-4 transition-transform duration-500 group-hover:translate-x-1" strokeWidth={2.2} />
+                <Icon name="arrow" className="size-4 transition-transform duration-500 group-hover:translate-x-1" />
               </a>
             </Magnetic>
             <Magnetic>
@@ -151,7 +151,7 @@ export function Hero() {
           <ul className="hero-fade mt-9 flex flex-wrap gap-x-6 gap-y-2 text-[0.92rem] font-medium text-ink-soft" aria-label="Ways to give">
             {hero.assurances.map((a) => (
               <li key={a} data-pop="1.06" className="inline-flex items-center gap-1.5">
-                <Icon name="check" className="size-4 text-forest" strokeWidth={2.6} />
+                <Icon name="check" className="size-4 text-forest" />
                 {a}
               </li>
             ))}
@@ -187,9 +187,7 @@ export function Hero() {
           <div data-depth="1.4" className="absolute top-[52%] left-[-8%] z-10">
             <div className="hero-card" data-pop="1.07">
               <div className="animate-bob flex items-center gap-3 rounded-2xl bg-white py-2.5 pr-4 pl-2.5 text-sm font-semibold whitespace-nowrap shadow-lift">
-                <span className="grid size-9 place-items-center rounded-xl bg-forest-soft text-forest">
-                  <Icon name="home" className="size-5" />
-                </span>
+                <Icon name="home" className="size-5 text-forest" />
                 {hero.cards[0]}
               </div>
             </div>
@@ -197,9 +195,7 @@ export function Hero() {
           <div data-depth="1.9" className="absolute right-[-4%] bottom-[-3%] z-10">
             <div className="hero-card" data-pop="1.07">
               <div className="animate-bob flex items-center gap-3 rounded-2xl bg-white py-2.5 pr-4 pl-2.5 text-sm font-semibold whitespace-nowrap shadow-lift [animation-delay:-3s]">
-                <span className="grid size-9 place-items-center rounded-xl bg-gold-soft text-gold-deep">
-                  <Icon name="school" className="size-5" />
-                </span>
+                <Icon name="school" className="size-5 text-gold-deep" />
                 {hero.cards[1]}
               </div>
             </div>

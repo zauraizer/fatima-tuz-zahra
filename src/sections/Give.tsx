@@ -125,7 +125,7 @@ export function Sponsorship() {
               className="btn btn-primary group min-h-14 px-8 text-lg"
             >
               Become a sponsor<span className="hidden sm:inline">&nbsp;for {usd(monthly.value)} a month</span>
-              <Icon name="arrow" className="size-5 transition-transform duration-500 group-hover:translate-x-1" strokeWidth={2.2} />
+              <Icon name="arrow" className="size-5 transition-transform duration-500 group-hover:translate-x-1" />
             </button>
           </Magnetic>
         </div>
@@ -146,9 +146,7 @@ export function Donate() {
           <ul className="mt-8 space-y-3">
             {give.trust.map((t) => (
               <li key={t.text} data-reveal data-pop="1.04" className="flex w-fit items-center gap-3 font-medium">
-                <span data-pop-icon className="grid size-9 place-items-center rounded-full bg-forest-soft text-forest">
-                  <Icon name={t.icon} className="size-4.5" strokeWidth={2} />
-                </span>
+                <Icon data-pop-icon name={t.icon} className="size-5 text-forest" />
                 {t.text}
               </li>
             ))}
@@ -229,7 +227,7 @@ export function WishlistLink({ className = "" }: { className?: string }) {
       }}
       className={`btn btn-ghost min-h-11 px-5 text-sm ${className}`}
     >
-      <Icon name="cart" className="size-4" strokeWidth={2} /> Open our Amazon wish list
+      <Icon name="cart" className="size-4" /> Open our Amazon wish list
     </a>
   );
 }
@@ -376,7 +374,7 @@ function DonateWidget() {
               </option>
             ))}
           </select>
-          <Icon name="chevronDown" className="pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2 text-forest" strokeWidth={2} />
+          <Icon name="chevronDown" className="pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2 text-forest" />
         </span>
       </label>
 
@@ -400,11 +398,11 @@ function DonateWidget() {
       <Magnetic className="mt-8 block w-full" strength={0.12}>
         <button type="button" onClick={submit} disabled={d.amount <= 0} className="btn btn-gold group min-h-15 w-full text-lg disabled:opacity-50">
           Give {usd(d.amount)} {d.frequency === "monthly" ? "monthly" : "now"}
-          <Icon name="arrow" className="size-5 transition-transform duration-500 group-hover:translate-x-1" strokeWidth={2.2} />
+          <Icon name="arrow" className="size-5 transition-transform duration-500 group-hover:translate-x-1" />
         </button>
       </Magnetic>
       <p className="mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-xs text-ink-soft">
-        <Icon name="lock" className="size-3.5" strokeWidth={2.2} />
+        <Icon name="lock" className="size-3.5" />
         <T v={links.donatePlatform} />
         {d.designation !== "General" && <span>Giving to {d.designation}</span>}
       </p>

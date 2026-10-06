@@ -41,8 +41,8 @@ export function Contact() {
       gsap
         .timeline()
         .from(success.current, { opacity: 0, scale: 0.94, duration: 0.7 })
-        .fromTo(".ok-ring", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, 0.1)
-        .fromTo(".ok-check", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, 0.7)
+        .fromTo(".ok-ring", { scale: 0.78, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "power2.out" }, 0.1)
+        .fromTo(".ok-check", { scale: 0.65, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.4)" }, 0.7)
         .from(".ok-text", { opacity: 0, y: 12, stagger: 0.08 }, 0.8);
     },
     { dependencies: [status], scope: success, revertOnUpdate: true },
@@ -114,9 +114,7 @@ export function Contact() {
           <ul className="mt-10 grid gap-5 sm:grid-cols-2">
             {INFO.map((item) => (
               <li key={item.label} data-reveal data-pop="1.04" className="flex items-start gap-4">
-                <span data-pop-icon className="grid size-12 shrink-0 place-items-center rounded-2xl border border-line bg-white text-forest">
-                  <Icon name={item.icon} className="size-5" />
-                </span>
+                <Icon data-pop-icon name={item.icon} className="mt-1 size-6 text-forest" />
                 <div>
                   <p className="text-[0.72rem] font-bold tracking-[0.12em] text-ink-soft uppercase">{item.label}</p>
                   <p className="mt-0.5 font-semibold">
@@ -146,10 +144,10 @@ export function Contact() {
         <div data-reveal className="relative">
           {status === "sent" ? (
             <div ref={success} className="card grid min-h-[34rem] place-content-center justify-items-center p-10 text-center shadow-lift">
-              <svg viewBox="0 0 80 80" className="size-24 text-forest" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle className="ok-ring" cx="40" cy="40" r="36" pathLength={1} strokeDasharray="1" />
-                <path className="ok-check" d="M25 41l10 10 20-22" pathLength={1} strokeDasharray="1" />
-              </svg>
+              <div className="relative grid size-24 place-items-center text-forest" aria-hidden="true">
+                <span className="ok-ring absolute inset-0 rounded-full border-[3px] border-current" />
+                <Icon name="check" className="ok-check relative size-10" />
+              </div>
               <p ref={thanks} tabIndex={-1} role="status" className="ok-text mt-6 font-display text-3xl font-semibold outline-none">
                 Thank you
                 <span className="mt-2 block max-w-xs font-sans text-base font-normal text-ink-soft">Your message is on its way. We'll be in touch soon.</span>
@@ -212,7 +210,7 @@ export function Contact() {
               <Magnetic className="mt-2 block w-full" strength={0.12}>
                 <button type="submit" disabled={status === "sending"} className="btn btn-primary group min-h-14 w-full disabled:opacity-60">
                   {status === "sending" ? "Sending" : "Send message"}
-                  <Icon name="arrow" className="size-4 transition-transform duration-500 group-hover:translate-x-1" strokeWidth={2.2} />
+                  <Icon name="arrow" className="size-4 transition-transform duration-500 group-hover:translate-x-1" />
                 </button>
               </Magnetic>
             </form>

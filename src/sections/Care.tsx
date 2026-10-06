@@ -56,12 +56,12 @@ export function SpotlightCard({ children, className = "", ...rest }: { children:
 
 /* Each card gets its own colour world — contrast checked for every pair. */
 const THEMES = [
-  { card: "bg-[linear-gradient(160deg,#2a7a5d,#143d30)]", title: "text-cream", body: "text-cream", icon: "bg-cream/12 text-gold-soft", num: "text-cream/[0.08]", stars: true },
-  { card: "bg-[linear-gradient(160deg,#f6cf74,#e2a93b)]", title: "text-forest-deep", body: "text-forest-deep/85", icon: "bg-forest-deep/10 text-forest-deep", num: "text-forest-deep/[0.09]", stars: false, cta: "btn-primary" },
-  { card: "bg-[linear-gradient(160deg,#b5543a,#8a3223)]", title: "text-white", body: "text-white", icon: "bg-white/15 text-white", num: "text-white/[0.1]", stars: true },
-  { card: "bg-[linear-gradient(160deg,#1d5566,#0d2a35)]", title: "text-cream", body: "text-cream/85", icon: "bg-cream/12 text-sky", num: "text-cream/[0.08]", stars: true },
-  { card: "bg-[linear-gradient(160deg,#cfe8f3,#9fcbe0)]", title: "text-ink", body: "text-ink/80", icon: "bg-white/60 text-teal", num: "text-ink/[0.07]", stars: false },
-  { card: "bg-[linear-gradient(160deg,#fffaf0,#f3ead8)] border border-line", title: "text-ink", body: "text-ink-soft", icon: "bg-forest text-gold-soft", num: "text-ink/[0.06]", stars: false },
+  { card: "bg-[linear-gradient(160deg,#2a7a5d,#143d30)]", title: "text-cream", body: "text-cream", icon: "text-gold-soft", num: "text-cream/[0.08]", stars: true },
+  { card: "bg-[linear-gradient(160deg,#f6cf74,#e2a93b)]", title: "text-forest-deep", body: "text-forest-deep/85", icon: "text-forest-deep", num: "text-forest-deep/[0.09]", stars: false, cta: "btn-primary" },
+  { card: "bg-[linear-gradient(160deg,#b5543a,#8a3223)]", title: "text-white", body: "text-white", icon: "text-white", num: "text-white/[0.1]", stars: true },
+  { card: "bg-[linear-gradient(160deg,#1d5566,#0d2a35)]", title: "text-cream", body: "text-cream/85", icon: "text-sky", num: "text-cream/[0.08]", stars: true },
+  { card: "bg-[linear-gradient(160deg,#cfe8f3,#9fcbe0)]", title: "text-ink", body: "text-ink/80", icon: "text-teal", num: "text-ink/[0.07]", stars: false },
+  { card: "bg-[linear-gradient(160deg,#fffaf0,#f3ead8)] border border-line", title: "text-ink", body: "text-ink-soft", icon: "text-forest", num: "text-ink/[0.06]", stars: false },
 ];
 
 /*
@@ -249,7 +249,7 @@ export function Care() {
               data-pop="1.08"
               className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-line bg-cream px-4 py-2 text-sm font-semibold text-forest transition-colors duration-300 hover:border-forest"
             >
-              <Icon name={playing ? "pause" : "play"} className="size-4" strokeWidth={2.2} />
+              <Icon name={playing ? "pause" : "play"} className="size-4" />
               {playing ? "Pause" : "Play"}
               <span className="sr-only"> the moving gallery</span>
             </button>
@@ -288,9 +288,7 @@ export function Care() {
                     >
                       {String(n + 1).padStart(2, "0")}
                     </span>
-                    <span data-pop-icon className={`relative grid size-16 place-items-center rounded-2xl backdrop-blur-sm ${t.icon}`}>
-                      <Icon name={item.icon} className="size-8" draw />
-                    </span>
+                    <Icon data-pop-icon name={item.icon} className={`relative size-8 ${t.icon}`} />
                     <div className="relative mt-auto">
                       <h3 className={`text-[1.9rem] leading-tight ${t.title}`}>{item.title}</h3>
                       <p className={`mt-3 text-[1.03rem] leading-relaxed ${t.body}`}>{item.body}</p>
@@ -429,9 +427,7 @@ function CareDetail({ n, source, returnTo, onClosed }: { n: number; source: HTML
 
         <div ref={content} className="relative flex h-full flex-col p-7 sm:p-10 md:p-14">
           <div className="flex items-start justify-between gap-4">
-            <span className={`grid size-16 place-items-center rounded-3xl backdrop-blur-sm md:size-24 ${t.icon}`}>
-              <Icon name={item.icon} className="size-8 md:size-12" />
-            </span>
+            <Icon name={item.icon} className={`size-8 md:size-12 ${t.icon}`} />
             <button
               ref={closeBtn}
               type="button"
@@ -440,7 +436,7 @@ function CareDetail({ n, source, returnTo, onClosed }: { n: number; source: HTML
               data-pop="1.1"
               className={`grid size-12 place-items-center rounded-full bg-white/20 backdrop-blur-md transition-colors hover:bg-white/35 ${t.title}`}
             >
-              <Icon name="plus" className="size-5 rotate-45" strokeWidth={2.2} />
+              <Icon name="plus" className="size-5 rotate-45" />
             </button>
           </div>
 
@@ -458,7 +454,7 @@ function CareDetail({ n, source, returnTo, onClosed }: { n: number; source: HTML
             <div className="mt-8 flex flex-wrap gap-3">
               {/* The gold card gets a green button so it doesn't vanish into the background. */}
               <a href="#donate" onClick={go("donate")} className={`btn ${"cta" in t ? t.cta : "btn-gold"}`}>
-                Help provide this <Icon name="arrow" className="size-4" strokeWidth={2.2} />
+                Help provide this <Icon name="arrow" className="size-4" />
               </a>
               <a href="#sponsor" onClick={go("sponsor")} className={`btn border-2 border-current hover:bg-white/15 ${t.title}`}>
                 Sponsor a child

@@ -11,7 +11,7 @@ export function Faq() {
         <div className="lg:sticky lg:top-28 lg:self-start">
           <SectionHeading eyebrow="Questions" title="Things people often ask" lead="Can't find what you're looking for? We're happy to talk." />
           <a data-reveal href="#contact" className="btn btn-ghost mt-8">
-            <Icon name="mail" className="size-4" strokeWidth={2} /> Ask us anything
+            <Icon name="mail" className="size-4" /> Ask us anything
           </a>
         </div>
         <div data-reveal className="border-t border-line">
