@@ -126,14 +126,16 @@
    --------------------------------------------------------------- */
 @layer components {
   .eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full bg-gold-soft px-3.5 py-1.5 text-[0.74rem] font-bold tracking-[0.16em] text-gold-ink uppercase;
+    @apply inline-flex items-center bg-transparent p-0 text-[0.95rem] font-medium tracking-[0.02em] text-gold-ink;
+    font-family: "Source Sans 3 Variable", var(--font-sans);
+    font-style: italic;
+    text-transform: none;
   }
   .eyebrow::before {
-    content: "";
-    @apply size-1.5 rounded-full bg-current;
+    content: none;
   }
   .eyebrow-dark {
-    @apply bg-cream/10 text-gold-soft;
+    @apply bg-transparent text-gold-soft;
   }
 
   /* Buttons: GSAP handles the hover "pop" (scale); CSS handles colour + the shine sweep. */
