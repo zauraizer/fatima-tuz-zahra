@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { defineConfig, type HtmlTagDescriptor, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -55,5 +56,14 @@ function launchGuard(): Plugin {
 export default defineConfig({
   plugins: [launchGuard(), react(), tailwindcss()],
   server: { port: 5190, strictPort: true },
-  build: { sourcemap: false },
+  build: {
+    sourcemap: false,
+    // Two pages: the site, and the 404 page hosts show for addresses that don't exist.
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL("./index.html", import.meta.url)),
+        notFound: fileURLToPath(new URL("./404.html", import.meta.url)),
+      },
+    },
+  },
 });

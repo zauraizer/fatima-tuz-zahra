@@ -15,7 +15,8 @@ Node lives in `../.tooling/node` (this Mac has no system Node), so use the scrip
 ```
 
 `dist/` is a plain static site: drag it into Netlify, or deploy it to
-Cloudflare Pages, Vercel or GitHub Pages.
+Cloudflare Pages, Vercel or GitHub Pages. It includes `404.html`, the page these
+hosts show for any address that doesn't exist (preview it at `/404.html`).
 
 ## Editing the content
 
