@@ -2,6 +2,7 @@ import { useRef, useState, type ReactNode } from "react";
 import { care } from "../content";
 import { SectionHeading } from "../components/Bits";
 import { Icon } from "../components/Icon";
+import { Photo } from "../components/Photo";
 import { gsap, isFinePointer, prefersReducedMotion, useGSAP } from "../lib/gsap";
 import { useReducedMotion } from "../lib/hooks";
 import { useLenis, useScrollTo } from "../components/SmoothScroll";
@@ -279,7 +280,7 @@ export function Care() {
               >
                   <SpotlightCard
                     data-pop="1.03"
-                    className={`flex h-[400px] w-[min(80vw,360px)] flex-col rounded-[2rem] p-8 shadow-lift transition-shadow duration-500 hover:shadow-pop md:h-[440px] md:w-[380px] ${t.card}`}
+                    className={`flex h-[400px] w-[min(80vw,360px)] flex-col rounded-[2rem] p-6 shadow-lift transition-shadow duration-500 hover:shadow-pop md:h-[440px] md:w-[380px] md:p-7 ${t.card}`}
                   >
                     {t.stars && <div className="bg-stars-light pointer-events-none absolute inset-0 opacity-[0.06]" />}
                     <span
@@ -288,10 +289,22 @@ export function Care() {
                     >
                       {String(n + 1).padStart(2, "0")}
                     </span>
-                    <Icon data-pop-icon name={item.icon} className={`relative size-8 ${t.icon}`} />
-                    <div className="relative mt-auto">
-                      <h3 className={`text-[1.9rem] leading-tight ${t.title}`}>{item.title}</h3>
-                      <p className={`mt-3 text-[1.03rem] leading-relaxed ${t.body}`}>{item.body}</p>
+                    {/* A real photo across the top of the card, with the topic's icon on it */}
+                    <div className="relative -mx-6 -mt-6 h-40 shrink-0 overflow-hidden md:-mx-7 md:-mt-7 md:h-48">
+                      <Photo
+                        name={item.photo.name}
+                        alt={item.photo.alt}
+                        focus={item.photo.focus}
+                        sizes="(min-width: 768px) 380px, 80vw"
+                        className="size-full object-cover transition-transform duration-[1.2s] ease-out-expo group-hover:scale-[1.06]"
+                      />
+                      <span data-pop-icon className="absolute bottom-4 left-4 grid size-12 place-items-center rounded-2xl bg-black/30 text-white backdrop-blur-md">
+                        <Icon name={item.icon} className="size-6" />
+                      </span>
+                    </div>
+                    <div className="relative mt-auto pt-5">
+                      <h3 className={`text-[1.6rem] leading-tight md:text-[1.9rem] ${t.title}`}>{item.title}</h3>
+                      <p className={`mt-2 text-[1.03rem] leading-relaxed ${t.body}`}>{item.body}</p>
                     </div>
                     {/* The whole card is clickable, while its heading and text stay readable on their own. */}
                     {!reduced && (
@@ -425,40 +438,52 @@ function CareDetail({ n, source, returnTo, onClosed }: { n: number; source: HTML
           {String(n + 1).padStart(2, "0")}
         </span>
 
-        <div ref={content} className="relative flex h-full flex-col p-7 sm:p-10 md:p-14">
-          <div className="flex items-start justify-between gap-4">
-            <Icon name={item.icon} className={`size-8 md:size-12 ${t.icon}`} />
-            <button
-              ref={closeBtn}
-              type="button"
-              onClick={() => close()}
-              aria-label="Close"
-              data-pop="1.1"
-              className={`grid size-12 place-items-center rounded-full bg-white/20 backdrop-blur-md transition-colors hover:bg-white/35 ${t.title}`}
-            >
-              <Icon name="plus" className="size-5 rotate-45" />
-            </button>
+        {/* Photo on one side (on top on phones), the story on the other */}
+        <div ref={content} className="relative flex h-full flex-col md:flex-row">
+          <div className="relative h-[34%] shrink-0 overflow-hidden md:h-full md:w-[48%]">
+            <Photo
+              name={item.photo.name}
+              alt={item.photo.alt}
+              focus={item.photo.focus}
+              sizes="(min-width: 768px) 520px, 90vw"
+              eager
+              className="size-full object-cover"
+            />
           </div>
+          <button
+            ref={closeBtn}
+            type="button"
+            onClick={() => close()}
+            aria-label="Close"
+            data-pop="1.1"
+            className="absolute top-4 right-4 z-10 grid size-12 place-items-center rounded-full bg-black/30 text-white backdrop-blur-md transition-colors hover:bg-black/45 md:top-6 md:right-6"
+          >
+            <Icon name="plus" className="size-5 rotate-45" />
+          </button>
 
-          <div className="mt-auto max-w-2xl">
-            <p className={`text-xs font-bold tracking-[0.2em] uppercase opacity-75 ${t.title}`}>
-              {care.eyebrow}
-              <span className="ml-3">
-                {n + 1} of {care.items.length}
-              </span>
-            </p>
-            <h3 id={`care-detail-${n}`} className={`mt-3 text-[clamp(2.4rem,4.5vw+1rem,4.75rem)] leading-[1.02] ${t.title}`}>
-              {item.title}
-            </h3>
-            <p className={`mt-5 text-lg leading-relaxed md:text-2xl md:leading-relaxed ${t.body}`}>{item.body}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              {/* The gold card gets a green button so it doesn't vanish into the background. */}
-              <a href="#donate" onClick={go("donate")} className={`btn ${"cta" in t ? t.cta : "btn-gold"}`}>
-                Help provide this <Icon name="arrow" className="size-4" />
-              </a>
-              <a href="#sponsor" onClick={go("sponsor")} className={`btn border-2 border-current hover:bg-white/15 ${t.title}`}>
-                Sponsor a child
-              </a>
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto p-6 sm:p-9 md:p-12">
+            <Icon name={item.icon} className={`size-8 md:size-12 ${t.icon}`} />
+
+            <div className="mt-auto max-w-2xl pt-6">
+              <p className={`text-xs font-bold tracking-[0.2em] uppercase opacity-75 ${t.title}`}>
+                {care.eyebrow}
+                <span className="ml-3">
+                  {n + 1} of {care.items.length}
+                </span>
+              </p>
+              <h3 id={`care-detail-${n}`} className={`mt-3 text-[clamp(2rem,2.4vw+1rem,3.6rem)] leading-[1.04] ${t.title}`}>
+                {item.title}
+              </h3>
+              <p className={`mt-4 text-lg leading-relaxed md:text-xl md:leading-relaxed ${t.body}`}>{item.body}</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                {/* The gold card gets a green button so it doesn't vanish into the background. */}
+                <a href="#donate" onClick={go("donate")} className={`btn ${"cta" in t ? t.cta : "btn-gold"}`}>
+                  Help provide this <Icon name="arrow" className="size-4" />
+                </a>
+                <a href="#sponsor" onClick={go("sponsor")} className={`btn border-2 border-current hover:bg-white/15 ${t.title}`}>
+                  Sponsor a child
+                </a>
+              </div>
             </div>
           </div>
         </div>

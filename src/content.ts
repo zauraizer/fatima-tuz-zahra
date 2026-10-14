@@ -9,6 +9,8 @@
    Before launch: fill in every draft and set `draftMode` to false.
    ===================================================================== */
 
+import type { PhotoName } from "./assets/photos";
+
 export type Draft = { readonly __draft: true; readonly value: string };
 /** Marks a placeholder that still needs real information. */
 export const draft = (value: string): Draft => ({ __draft: true, value });
@@ -149,6 +151,7 @@ export const story = {
     { title: "Belonging", body: "Brothers and sisters, celebrations and traditions. A real family." },
   ],
   badge: "A home for every child   Fatima tuz Zahra   ",
+  photo: { name: "snack-time", alt: "A group of smiling children sitting together at snack time", focus: "45% 50%" } satisfies Omit<GalleryPhoto, "caption">,
 };
 
 /** Scroll-highlighted statement. Words in `accent` are painted gold. */
@@ -162,12 +165,42 @@ export const care = {
   title: "Everything a child needs to grow up well",
   lead: "Your support doesn't just keep the lights on. It covers the whole of a child's life with us.",
   items: [
-    { icon: "home", title: "A safe home", body: "Clean rooms, warm bedding and caregivers on hand around the clock." },
-    { icon: "school", title: "Education", body: "Every child goes to school, with homework help and tutoring each afternoon." },
-    { icon: "health", title: "Health and nutrition", body: "Three nourishing meals a day, regular checkups and medical care when needed." },
-    { icon: "book", title: "Faith and character", body: "Quran lessons, daily prayer and the everyday manners that build good character." },
-    { icon: "ball", title: "Play and wellbeing", body: "Sports, games, art and outings. Time to simply be a child." },
-    { icon: "tools", title: "Skills for life", body: "Vocational training and guidance so older children leave ready to stand on their own." },
+    {
+      icon: "home",
+      title: "A safe home",
+      body: "Clean rooms, warm bedding and caregivers on hand around the clock.",
+      photo: { name: "care-home", alt: "Children sitting together on a rug at home", focus: "45% 50%" },
+    },
+    {
+      icon: "school",
+      title: "Education",
+      body: "Every child goes to school, with homework help and tutoring each afternoon.",
+      photo: { name: "care-education", alt: "A boy reading his textbook at a desk", focus: "26% 50%" },
+    },
+    {
+      icon: "health",
+      title: "Health and nutrition",
+      body: "Three nourishing meals a day, regular checkups and medical care when needed.",
+      photo: { name: "care-meals", alt: "Children eating a meal with fruit at a long table", focus: "35% 50%" },
+    },
+    {
+      icon: "book",
+      title: "Faith and character",
+      body: "Quran lessons, daily prayer and the everyday manners that build good character.",
+      photo: { name: "care-faith", alt: "Two boys in prayer caps reading the Quran", focus: "60% 50%" },
+    },
+    {
+      icon: "ball",
+      title: "Play and wellbeing",
+      body: "Sports, games, art and outings. Time to simply be a child.",
+      photo: { name: "care-play", alt: "Boys running and playing football on a grassy field", focus: "50% 50%" },
+    },
+    {
+      icon: "tools",
+      title: "Skills for life",
+      body: "Vocational training and guidance so older children leave ready to stand on their own.",
+      photo: { name: "care-skills", alt: "A boy working at a computer", focus: "79% 50%" },
+    },
   ],
 } as const;
 
@@ -185,10 +218,88 @@ export const day = {
   ],
 };
 
+/*
+  Photos. The picture files are made by  ./dev.sh photos  from the originals in
+  the photos/ folder; `name` is the original's file name without its extension.
+  `alt` describes the picture for people who use screen readers. `caption` is the
+  short line shown with it. `focus` (optional) is the part to keep in view when a
+  photo is cropped to fit its tile, as "left% top%".
+*/
+export type GalleryPhoto = { name: PhotoName; alt: string; caption: string; focus?: string };
+
+export const gallery = {
+  eyebrow: "Gallery",
+  title: "Moments from our home",
+  lead: "School runs, mealtimes, prayer and play. Everyday life at Fatima tuz Zahra.",
+  /** The first eight fill the grid on the page. "See all" opens every one of them, ending with our opening day. */
+  photos: [
+    { name: "laughing", caption: "Laughter is never far away", alt: "A boy laughing with his friends", focus: "35% 50%" },
+    { name: "off-to-school", caption: "Off to school", alt: "A boy in school uniform heading out the door with his backpack", focus: "57% 50%" },
+    { name: "mealtime-smile", caption: "Mealtimes together", alt: "A boy smiling at the table during a meal", focus: "85% 40%" },
+    { name: "craft-class", caption: "Craft time", alt: "A teacher helping children with a craft project", focus: "50% 40%" },
+    { name: "prayer", caption: "Prayer together", alt: "Boys in prayer caps standing side by side in prayer", focus: "57% 50%" },
+    { name: "movie-time", caption: "Watching together", alt: "Children gathered around a laptop watching something together", focus: "70% 50%" },
+    { name: "homework", caption: "Homework club", alt: "Boys doing their homework together at a table", focus: "45% 50%" },
+    { name: "my-family", caption: "Made with love", alt: "A cardboard house and paper crafts the children made, with a sign reading My family", focus: "70% 50%" },
+    { name: "chess", caption: "A game of chess", alt: "Children playing chess and other games on a play mat" },
+    { name: "quran-class", caption: "Quran class", alt: "Children sitting on the carpet reading the Quran with their teacher" },
+    { name: "lunch", caption: "Lunch is served", alt: "A caregiver serving lunch to the boys at a long table" },
+    { name: "ready-for-school", caption: "Ready for school", alt: "Boys in school uniforms with backpacks walking in a line" },
+    { name: "stairs", caption: "Down the stairs", alt: "Boys with backpacks heading down the stairs, seen from above" },
+    { name: "study-room", caption: "Quiet study time", alt: "Boys studying at desks with a tutor" },
+    { name: "drawing", caption: "Drawing", alt: "A boy drawing with a pink pen" },
+    { name: "snack-time", caption: "Snack time", alt: "A group of children sitting together with snacks, smiling" },
+    { name: "school-bags", caption: "Which bag is mine", alt: "A little boy reaching up for his school bag on the shelf" },
+    { name: "all-smiles", caption: "All smiles", alt: "Boys sitting together, smiling" },
+    { name: "open-field", caption: "Room to run", alt: "Children playing on a wide green field" },
+    { name: "prayer-line", caption: "Lining up for prayer", alt: "Boys in prayer caps standing in a row" },
+    { name: "little-ones", caption: "The little ones", alt: "Young children at a table with a caregiver" },
+    { name: "activity-time", caption: "Activity time", alt: "Boys working on an activity together on the play mat" },
+    { name: "listening", caption: "Listening closely", alt: "Boys sitting together listening, one of them smiling" },
+    { name: "thinking", caption: "Deep in thought", alt: "A boy at a desk looking up from his work" },
+    { name: "evening-table", caption: "Evening together", alt: "Boys in matching white shirts sitting around a long table in the evening sun" },
+    { name: "ribbon-cutting", caption: "Cutting the ribbon", alt: "Two elders applauding as the ribbon is cut at the entrance", focus: "50% 20%" },
+    { name: "talk-elder", caption: "A few words for our guests", alt: "An elder speaks to guests from the podium, beside the Fatima tuz Zahra banner", focus: "35% 40%" },
+    { name: "meal-gift", caption: "A treat for every child", alt: "A guest hands a meal box to one of the children", focus: "60% 50%" },
+    { name: "talk-podium", caption: "What sponsorship means", alt: "A speaker talks about orphan sponsorship, with our calligraphy logo projected behind him", focus: "60% 40%" },
+    { name: "welcome-gate", caption: "Welcoming our guests", alt: "Guests shaking hands at the front gate in the evening light" },
+    { name: "meal-boxes", caption: "Treats all round", alt: "Children sitting in a row, each holding a red meal box", focus: "50% 45%" },
+    { name: "computer-class", caption: "Learning computer skills", alt: "Two boys sitting at the computers, with our logo on the screens", focus: "50% 40%" },
+    { name: "computer-room", caption: "Our computer room", alt: "A row of computers in the computer room, each screen showing our logo" },
+    { name: "three-boys", caption: "Front row seats", alt: "Three boys in matching white shirts sitting side by side" },
+    { name: "meal-handout", caption: "Handing out treats", alt: "A young volunteer hands out meal boxes to the children" },
+    { name: "guests-roses", caption: "A rose for every guest", alt: "Guests reading the event booklet, each holding a red rose" },
+    { name: "guests-stairs", caption: "Families and friends", alt: "Families and friends gathered on the staircase" },
+    { name: "standing-together", caption: "Standing together", alt: "Two boys in matching white shirts standing beside an elder" },
+    { name: "guests-standing", caption: "Our guests", alt: "Guests standing together during the program" },
+    { name: "talk-guest", caption: "Speaking to our guests", alt: "A woman speaks at the podium beside the Orphanage and Old House banner" },
+    { name: "computer-screen", caption: "Ready for class", alt: "A computer screen showing our calligraphy logo" },
+    { name: "guest-portrait", caption: "One of our guests", alt: "A guest at the event" },
+  ] as GalleryPhoto[],
+};
+
 export const verse = {
   arabic: "وَيُطْعِمُونَ ٱلطَّعَامَ عَلَىٰ حُبِّهِۦ مِسْكِينًا وَيَتِيمًا وَأَسِيرًا",
   translation: "They give food, though they love it themselves, to the poor, the orphan and the captive.",
   reference: "Surah Al Insan 76:8. A verse traditionally linked to the household of Fatima al Zahra.",
+};
+
+/** Portraits shown just before Sponsor a child. Names are never shown. */
+export const children = {
+  eyebrow: "Our children",
+  title: "Every one of them deserves a childhood",
+  lead: "Curious, funny and full of plans. These are some of the children who call Fatima tuz Zahra home.",
+  note: "Shared with their guardians' permission. We never publish the children's names.",
+  faces: [
+    { name: "face-1", alt: "A smiling boy in a grey shirt" },
+    { name: "face-2", alt: "A boy with a big grin in a grey shirt" },
+    { name: "face-3", alt: "A smiling boy in a light grey shirt" },
+    { name: "face-4", alt: "A smiling boy in a turquoise shirt" },
+    { name: "face-5", alt: "A boy with a quiet smile in a white shirt" },
+    { name: "face-6", alt: "A boy laughing in a white shirt" },
+    { name: "face-7", alt: "A smiling boy in a white shirt" },
+    { name: "face-8", alt: "A smiling boy in a red shirt" },
+  ] as { name: PhotoName; alt: string }[],
 };
 
 export const sponsorship = {

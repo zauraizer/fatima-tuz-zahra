@@ -29,6 +29,18 @@ You don't need to touch any component to change what the site says.
   panels when needed, and **Preview** hides the highlights.
 - Before launch: fill every draft, then set `draftMode: false`.
 
+### Photos
+
+1. Drop the original pictures into the `photos/` folder (any JPG, PNG, WebP or HEIC).
+   Give each a short name, like `computer-room.jpg`.
+2. Run `./dev.sh photos`. It makes two web-sized copies of each one in
+   `src/assets/photos/`, strips all hidden data (camera, date, GPS location),
+   trims black bars off video stills, and adds a blurred preview for loading.
+3. Use the name (without `.jpg`) in `src/content.ts`: `gallery.photos` for the
+   gallery, `story.photo` for the About section. Give each an `alt` description.
+
+The originals in `photos/` are never committed; only the cleaned copies are.
+
 ### Things to connect
 
 | Setting | What it's for |

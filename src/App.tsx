@@ -11,9 +11,11 @@ import { useFinePointer, useReducedMotion } from "./lib/hooks";
 import { usePopHover } from "./lib/pop";
 import { useReveals } from "./lib/reveal";
 import { Care } from "./sections/Care";
+import { Children } from "./sections/Children";
 import { Contact } from "./sections/Contact";
 import { DayCycle } from "./sections/DayCycle";
 import { Faq } from "./sections/Faq";
+import { Gallery } from "./sections/Gallery";
 import { BackToTop, Footer } from "./sections/Footer";
 import { Donate, Sponsorship } from "./sections/Give";
 import { Hero } from "./sections/Hero";
@@ -81,7 +83,9 @@ function Site() {
           <WindowReveal />
           <Care />
           <DayCycle />
+          <Gallery />
           <Verse />
+          <Children />
           <div id="give" className="outline-none">
             <Sponsorship />
             <Donate />

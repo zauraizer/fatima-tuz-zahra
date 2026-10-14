@@ -9,3 +9,7 @@ dist
 !.env.example
 *.pem
 *.key
+
+# Original photos (may carry camera and location data). Only the cleaned
+# copies made by `./dev.sh photos` (in src/assets/photos/) are committed.
+/photos/
