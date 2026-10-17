@@ -1,46 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { bank, contact, donateUrl, give, isTaxExempt, links, sponsorship, taxExempt, type Designation } from "../content";
-import { CopyButton, SectionHeading } from "../components/Bits";
+import { contact, donateUrl, give, isTaxExempt, links, phoneHref, sponsorship, taxExempt, type Designation } from "../content";
+import { SectionHeading } from "../components/Bits";
 import { Collapsible } from "../components/Collapsible";
 import { Magnetic } from "../components/Effects";
 import { Icon } from "../components/Icon";
 import { useToast } from "../components/Toast";
-import { impactFor, useDonation } from "../lib/donation";
+import { useDonation } from "../lib/donation";
 import { DraftNum, linkMissing, T, textOf } from "../lib/draft";
 import { usd, usdWhole } from "../lib/format";
 import { gsap, prefersReducedMotion, useGSAP } from "../lib/gsap";
-
-/** Tween a number into an element's text (whole dollars mid-flight, exact at rest). */
-function useTweenedMoney(value: number) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const shown = useRef({ v: value });
-  // A plain effect: each new value kills the previous tween and carries on from
-  // wherever the number had got to.
-  useEffect(() => {
-    const el = ref.current!;
-    if (!el.textContent) el.textContent = usd(value);
-    if (prefersReducedMotion()) {
-      shown.current.v = value;
-      el.textContent = usd(value);
-      return;
-    }
-    const tween = gsap.to(shown.current, {
-      v: value,
-      duration: 0.9,
-      ease: "expo.out",
-      onUpdate: () => {
-        el.textContent = usdWhole(shown.current.v);
-      },
-      onComplete: () => {
-        el.textContent = usd(value);
-      },
-    });
-    return () => {
-      tween.kill();
-    };
-  }, [value]);
-  return ref;
-}
 
 /** Largest gift the form accepts in one go; bigger gifts are better arranged with us directly. */
 const MAX_GIFT = 100_000;
@@ -151,56 +119,23 @@ export function Donate() {
               </li>
             ))}
           </ul>
-          {isTaxExempt && (
-            <p data-reveal className="mt-6 text-sm leading-relaxed text-ink-soft">
-              {taxExempt.note} EIN {taxExempt.ein}.
-            </p>
-          )}
+          <p data-reveal className="mt-6 text-sm leading-relaxed text-ink-soft">
+            {isTaxExempt ? `${taxExempt.note} EIN ${taxExempt.ein}.` : taxExempt.pending}
+          </p>
 
           <div data-reveal className="mt-10">
             <p className="eyebrow">Other ways to give</p>
             <div className="mt-3 border-t border-line">
               <Collapsible title="Bank transfer" icon="bank">
-                <dl className="divide-y divide-line rounded-2xl bg-white px-4 shadow-soft">
-                  {(
-                    [
-                      ["Account name", bank.accountName],
-                      ["Bank", bank.bankName],
-                      ["Routing number", bank.routing],
-                      ["Account number", bank.account],
-                    ] as const
-                  ).map(([label, value]) => (
-                    <div key={label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 py-3">
-                      <dt className="text-[0.7rem] font-bold tracking-widest text-ink-soft uppercase">{label}</dt>
-                      <dd className="col-start-1 mt-0.5 font-semibold break-words tabular-nums">
-                        <T v={value} />
-                      </dd>
-                      <dd className="col-start-2 row-span-2 row-start-1">
-                        <CopyButton value={value} label={label} />
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-                <p className="mt-3 text-sm text-ink-soft">
-                  Then email your confirmation to <T v={contact.email} /> so we can send a receipt.
-                </p>
-              </Collapsible>
-              <Collapsible title="Zelle" icon="zap">
-                <div className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-soft">
-                  <p>
-                    Send to <strong><T v={bank.zelle} /></strong>
-                  </p>
-                  <CopyButton value={bank.zelle} label="Zelle address" />
+                <p className="text-ink-soft">{give.bankTransfer}</p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <a href={phoneHref} className="btn btn-ghost min-h-11 px-5 text-sm">
+                    <Icon name="phone" className="size-4" /> {contact.phone}
+                  </a>
+                  <a href="#contact" className="btn btn-ghost min-h-11 px-5 text-sm">
+                    <Icon name="mail" className="size-4" /> Send a message
+                  </a>
                 </div>
-              </Collapsible>
-              <Collapsible title="Mail a check" icon="envelope">
-                <p className="text-ink-soft">
-                  Make it payable to <strong className="text-ink">{bank.checkPayableTo}</strong> and mail it to <T v={contact.address} />.
-                </p>
-              </Collapsible>
-              <Collapsible title="Shop our wish list" icon="cart">
-                <p className="text-ink-soft">Send exactly what the children need, delivered straight to the home.</p>
-                <WishlistLink className="mt-4" />
               </Collapsible>
             </div>
           </div>
@@ -212,26 +147,6 @@ export function Donate() {
   );
 }
 
-export function WishlistLink({ className = "" }: { className?: string }) {
-  const toast = useToast();
-  return (
-    <a
-      href={textOf(links.amazonWishlist)}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={(e) => {
-        if (linkMissing(links.amazonWishlist)) {
-          e.preventDefault();
-          toast("Wish list link not set yet. Add links.amazonWishlist in src/content.ts");
-        }
-      }}
-      className={`btn btn-ghost min-h-11 px-5 text-sm ${className}`}
-    >
-      <Icon name="cart" className="size-4" /> Open our Amazon wish list
-    </a>
-  );
-}
-
 function DonateWidget() {
   const d = useDonation();
   const toast = useToast();
@@ -239,8 +154,6 @@ function DonateWidget() {
   const [custom, setCustom] = useState("");
   const [amountError, setAmountError] = useState("");
   const isPreset = custom === "" && give.presets.includes(d.amount);
-  const impact = impactFor(d.amount);
-  const amountRef = useTweenedMoney(d.amount);
 
   // When another section pre-fills the widget, mirror a non-preset amount into the "Other" field.
   useEffect(() => {
@@ -249,14 +162,6 @@ function DonateWidget() {
     setAmountError("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [d.pulse]);
-
-  // Opacity only: the line is a live region, and hidden text isn't announced.
-  useGSAP(
-    () => {
-      gsap.fromTo(".impact-line", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" });
-    },
-    { scope: root, dependencies: [textOf(impact), d.frequency], revertOnUpdate: true },
-  );
 
   useGSAP(
     () => {
@@ -377,23 +282,6 @@ function DonateWidget() {
           <Icon name="chevronDown" className="pointer-events-none absolute top-1/2 right-4 size-5 -translate-y-1/2 text-forest" />
         </span>
       </label>
-
-      {/* Impact */}
-      <div className="relative mt-8 flex flex-col items-start gap-3 overflow-hidden rounded-2xl bg-forest-deep p-5 text-cream sm:flex-row sm:items-center sm:gap-5">
-        <div className="bg-stars-light pointer-events-none absolute inset-0 opacity-[0.05]" />
-        <div className="relative shrink-0 sm:text-center">
-          <p className="font-display text-[2.1rem] leading-none font-semibold text-gold-soft tabular-nums">
-            <span ref={amountRef} aria-hidden="true" />
-            <span className="sr-only">{usd(d.amount)}</span>
-          </p>
-          <p className="mt-1.5 text-[0.68rem] font-bold tracking-[0.16em] text-cream/55 uppercase">{d.frequency === "monthly" ? "per month" : "one time"}</p>
-        </div>
-        <div className="relative hidden h-12 w-px shrink-0 bg-cream/15 sm:block" />
-        <p className="impact-line relative text-[0.98rem] leading-snug" aria-live="polite">
-          {d.frequency === "monthly" ? "Every month, this " : "This "}
-          <T v={impact} />.
-        </p>
-      </div>
 
       <Magnetic className="mt-8 block w-full" strength={0.12}>
         <button type="button" onClick={submit} disabled={d.amount <= 0} className="btn btn-gold group min-h-15 w-full text-lg disabled:opacity-50">

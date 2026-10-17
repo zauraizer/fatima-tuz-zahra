@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { contact, footer, forms, isTaxExempt, links, nav, site, taxExempt } from "../content";
+import { contact, footer, forms, isTaxExempt, links, nav, phoneHref, site, taxExempt } from "../content";
 import { LogoMark } from "../components/Brand";
 import { Icon } from "../components/Icon";
 import { useScrollTo } from "../components/SmoothScroll";
 import { useToast } from "../components/Toast";
-import { isDraft, linkMissing, T, textOf } from "../lib/draft";
+import { linkMissing, T, textOf } from "../lib/draft";
 import { gsap, prefersReducedMotion, ScrollTrigger, SplitText, useGSAP } from "../lib/gsap";
 import { onEnterOnce } from "../lib/reveal";
+
+const SOCIAL = (["instagram", "facebook", "youtube"] as const).filter((s) => !linkMissing(links[s]));
 
 export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
   const root = useRef<HTMLElement>(null);
@@ -37,17 +39,17 @@ export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
   return (
     <footer ref={root} id="site-footer" className="relative overflow-hidden bg-forest-night text-cream/75">
       <div className="bg-stars-light pointer-events-none absolute inset-0 opacity-[0.035]" />
-      <div className="relative mx-auto max-w-[1240px] px-5 pt-24">
-        <Newsletter />
+      <div className={`relative mx-auto max-w-[1240px] px-5 ${forms.newsletterEndpoint ? "pt-24" : "pt-16"}`}>
+        {forms.newsletterEndpoint && <Newsletter />}
 
-        <div className="mt-20 grid gap-12 border-t border-cream/10 pt-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
+        <div className={`grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] ${forms.newsletterEndpoint ? "mt-20 border-t border-cream/10 pt-14" : ""}`}>
           <div>
             <a href="#top" className="inline-flex items-center gap-3 text-cream">
               <LogoMark className="h-14 w-auto" />
               <span className="font-display text-xl font-semibold">{site.name}</span>
             </a>
             <p className="mt-5 max-w-xs leading-relaxed">{site.tagline}</p>
-            {isTaxExempt && <p className="mt-4 text-sm text-cream/55">501(c)(3) nonprofit, EIN {taxExempt.ein}</p>}
+            <p className="mt-4 text-sm text-cream/55">{isTaxExempt ? `501(c)(3) nonprofit, EIN ${taxExempt.ein}` : taxExempt.pending}</p>
           </div>
 
           <nav aria-label="Footer">
@@ -64,30 +66,35 @@ export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
 
           <FooterCol title="Contact">
             <li><T v={contact.email} /></li>
-            <li><T v={contact.phone} /></li>
-            <li><T v={contact.address} /></li>
+            <li>
+              <a href={phoneHref} className="transition-colors hover:text-gold-soft">
+                {contact.phone}
+              </a>
+            </li>
+            <li>Visits: {contact.hours}</li>
           </FooterCol>
 
           <div>
             <h3 className="font-sans text-[0.75rem] font-bold tracking-[0.16em] text-gold uppercase">Protecting our children</h3>
             <p className="mt-4 text-sm leading-relaxed">{footer.privacy}</p>
-            <div className="mt-6 flex gap-2">
-              {/* Unset profiles are hidden on the live site (shown highlighted in draft mode). */}
-              {(["instagram", "facebook", "youtube"] as const).filter((s) => (site.draftMode && isDraft(links[s])) || !linkMissing(links[s])).map((s) => (
-                <a
-                  key={s}
-                  href={textOf(links[s])}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${s} (opens in a new tab)`}
-                  data-todo={site.draftMode && isDraft(links[s]) ? "" : undefined}
-                  data-pop="1.15"
-                  className="grid size-11 place-items-center rounded-full border border-cream/15 transition-colors duration-300 hover:border-gold-bright hover:bg-gold-bright hover:text-forest-deep"
-                >
-                  <Icon name={s} className="size-5" />
-                </a>
-              ))}
-            </div>
+            {SOCIAL.length > 0 && (
+              <div className="mt-6 flex gap-2">
+                {/* Profiles without a link are hidden. */}
+                {SOCIAL.map((s) => (
+                  <a
+                    key={s}
+                    href={textOf(links[s])}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${s} (opens in a new tab)`}
+                    data-pop="1.15"
+                    className="grid size-11 place-items-center rounded-full border border-cream/15 transition-colors duration-300 hover:border-gold-bright hover:bg-gold-bright hover:text-forest-deep"
+                  >
+                    <Icon name={s} className="size-5" />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -103,7 +110,7 @@ export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
       <div className="relative border-t border-cream/10">
         <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-3 px-5 py-6 text-sm text-cream/55">
           <p>
-            © {new Date().getFullYear()} {site.name} {site.kind}. All rights reserved.
+            © {new Date().getFullYear()} {site.fullName}. All rights reserved.
             <button type="button" onClick={openPrivacy} className="-my-2 ml-4 inline-block py-2 underline-offset-4 transition-colors hover:text-gold-soft hover:underline">
               Privacy
             </button>
@@ -134,13 +141,11 @@ function Newsletter() {
   useEffect(() => {
     if (done) thanks.current?.focus();
   }, [done]);
-  if (!forms.newsletterEndpoint && !site.draftMode) return null;
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const email = new FormData(e.currentTarget).get("email")?.toString().trim();
     if (!email) return toast("Add your email first");
-    if (!forms.newsletterEndpoint) return toast("Newsletter not connected yet. Add forms.newsletterEndpoint in src/content.ts");
     try {
       const res = await fetch(forms.newsletterEndpoint, {
         method: "POST",

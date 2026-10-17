@@ -46,10 +46,3 @@ export function DonationProvider({ children, onPrefill }: { children: ReactNode;
   const value = useMemo(() => ({ ...state, update, prefill, pulse }), [state, update, prefill, pulse]);
   return <DonationContext.Provider value={value}>{children}</DonationContext.Provider>;
 }
-
-/** The impact sentence for a given amount. */
-export function impactFor(amount: number) {
-  let match = give.impact[0];
-  for (const tier of give.impact) if (amount >= tier.min) match = tier;
-  return match.text;
-}

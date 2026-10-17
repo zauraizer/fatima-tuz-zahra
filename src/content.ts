@@ -25,9 +25,13 @@ export const site = {
 
   name: "Fatima tuz Zahra",
   nameArabic: "فاطمة الزهراء",
-  kind: "Orphanage",
+  /** Shown under the name in the header. */
+  subtitle: "Bait ul Khair",
+  /** For the copyright line, sharing and screen readers. */
+  fullName: "Fatima tuz Zahra, Bait ul Khair",
   tagline: "A home, a family and a future for children who have lost theirs.",
-  founded: draft("[year]"),
+  founded: "2020",
+  city: "Lahore, Pakistan",
 };
 
 /*
@@ -39,6 +43,8 @@ export const site = {
 export const taxExempt = {
   ein: "",
   note: "Fatima tuz Zahra is a 501(c)(3) nonprofit. Donations are tax deductible to the extent allowed by law.",
+  /** Shown in the same places while the EIN is empty. */
+  pending: "Our 501(c)(3) registration is in progress.",
 };
 export const isTaxExempt = taxExempt.ein.trim() !== "";
 
@@ -47,11 +53,10 @@ export const links = {
   donate: draft("https://"),
   /** Shown under the donate button, e.g. "Secure checkout by Givebutter". */
   donatePlatform: draft("Secure checkout by [platform]"),
-  amazonWishlist: draft("https://"),
-  fundraiser: draft("https://"),
-  instagram: draft("https://instagram.com/"),
-  facebook: draft("https://facebook.com/"),
-  youtube: draft("https://youtube.com/"),
+  /** Footer icons. An empty one is hidden. */
+  instagram: "",
+  facebook: "",
+  youtube: "",
 };
 
 /*
@@ -61,8 +66,8 @@ export const links = {
   gift from the link and set them here. For example:
     url.searchParams.set("amount", String(gift.amount));
     url.searchParams.set("frequency", gift.frequency === "monthly" ? "monthly" : "once");
-  Zakat must reach a separate fund, so make sure the designation gets through
-  (a parameter, or a separate campaign link per designation).
+  Pass the designation through too (a parameter, or a separate campaign link per
+  designation), so Zakat and Sadaqah gifts are recorded as such.
 */
 export function donateUrl(base: string, gift: { amount: number; frequency: "monthly" | "once"; designation: Designation }) {
   const url = new URL(base);
@@ -84,21 +89,14 @@ export const forms = {
 
 export const contact = {
   email: draft("info@example.org"),
-  phone: draft("(000) 000-0000"),
-  address: draft("[Street, city, state, ZIP]"),
-  hours: draft("[for example, Monday to Saturday, 10am to 5pm]"),
-  /** Google Maps → Share → Embed a map → copy only the src="…" URL. */
+  phone: "+1 832 527 7586",
+  /** The address stays private for the children's safety; visitors call ahead. */
+  hours: "By appointment",
+  /** Google Maps → Share → Embed a map → copy only the src="…" URL. Empty = no map. */
   mapEmbed: "",
 };
-
-export const bank = {
-  accountName: draft("Fatima tuz Zahra Inc."),
-  bankName: draft("[Bank name]"),
-  routing: draft("000000000"),
-  account: draft("000000000000"),
-  zelle: draft("donate@example.org"),
-  checkPayableTo: "Fatima tuz Zahra",
-};
+/** For tel: links. */
+export const phoneHref = `tel:${contact.phone.replace(/[^\d+]/g, "")}`;
 
 export const nav = [
   { id: "about", label: "About" },
@@ -120,10 +118,10 @@ export const hero = {
 };
 
 export const stats: { n: Num; suffix?: string; label: string }[] = [
-  { n: { value: 40, draft: true }, label: "children in our care" },
-  { n: { value: 10, draft: true }, label: "years serving our community" },
-  { n: { value: 100, draft: true }, suffix: "%", label: "of school age children enrolled" },
-  { n: { value: 43800, draft: true }, label: "meals served each year" },
+  { n: { value: 55 }, label: "children in our care" },
+  { n: { value: 6 }, label: "years serving our community" },
+  { n: { value: 100 }, suffix: "%", label: "of school age children enrolled" },
+  { n: { value: 61000 }, label: "meals served each year" },
 ];
 
 export const marquee = ["Safety", "Education", "Faith", "Belonging", "Hope", "Family", "Dignity", "Mercy"];
@@ -133,16 +131,13 @@ export const story = {
   title: "Named for a woman remembered for her mercy",
   paragraphs: [
     [
-      "Fatima tuz Zahra Orphanage opened its doors in ",
-      site.founded,
-      " in ",
-      draft("[city]"),
-      " with a simple promise: no child in our community should grow up without a home. ",
+      `${site.fullName} opened its doors in ${site.founded} in ${site.city}, with a simple promise: no child in our community should grow up without a home. `,
       draft("[One or two sentences on who founded it and why.]"),
     ],
     [
       "Our name honors Sayyida Fatima al Zahra, daughter of the Prophet Muhammad ﷺ, remembered across generations for her generosity to the poor and the orphan. We raise our children in that same spirit, with dignity, warmth and faith.",
     ],
+    ["Our care doesn't end when school does. We send our children on to college and help them find work, so each one leaves ready for a future of their own."],
   ] as Rich[],
   values: [
     { title: "Safety", body: "A secure home with caring adults present day and night." },
@@ -198,7 +193,7 @@ export const care = {
     {
       icon: "tools",
       title: "Skills for life",
-      body: "Vocational training and guidance so older children leave ready to stand on their own.",
+      body: "Computer classes, college and help finding a first job, so older children leave ready to stand on their own.",
       photo: { name: "care-skills", alt: "A boy working at a computer", focus: "79% 50%" },
     },
   ],
@@ -272,7 +267,7 @@ export const gallery = {
     { name: "guests-stairs", caption: "Families and friends", alt: "Families and friends gathered on the staircase" },
     { name: "standing-together", caption: "Standing together", alt: "Two boys in matching white shirts standing beside an elder" },
     { name: "guests-standing", caption: "Our guests", alt: "Guests standing together during the program" },
-    { name: "talk-guest", caption: "Speaking to our guests", alt: "A woman speaks at the podium beside the Orphanage and Old House banner" },
+    { name: "talk-guest", caption: "Speaking to our guests", alt: "A woman speaks to our guests from the podium" },
     { name: "computer-screen", caption: "Ready for class", alt: "A computer screen showing our calligraphy logo" },
     { name: "guest-portrait", caption: "One of our guests", alt: "A guest at the event" },
   ] as GalleryPhoto[],
@@ -305,7 +300,7 @@ export const children = {
 export const sponsorship = {
   eyebrow: "Sponsor a child",
   title: "One child. One sponsor. Every month.",
-  monthly: { value: 250, draft: true } as Num,
+  monthly: { value: 125 } as Num,
   steps: [
     { title: "Choose your monthly gift", body: "Sponsorship covers one child's food, schooling and care, month after month." },
     { title: "We match you with a child", body: "You'll be paired with a child in our care. To protect their privacy, profiles are never published online." },
@@ -318,24 +313,17 @@ export type Designation = "General" | "Zakat" | "Sadaqah" | "Lillah" | "Sponsors
 export const give = {
   eyebrow: "Give",
   title: "Your gift becomes a childhood",
-  lead: "Give once or every month. Choose where it goes and see what it makes possible.",
+  lead: "Give once or every month, and choose where it goes. 100% of what we receive is spent on the children.",
   presets: [25, 100, 500],
   defaultAmount: 100,
   designations: ["General", "Zakat", "Sadaqah", "Lillah", "Sponsorship"] as Designation[],
-  /** What a gift of at least `min` dollars provides. Replace with your real costs. */
-  impact: [
-    { min: 0, text: draft("helps cover the everyday costs of caring for our children") },
-    { min: 25, text: draft("buys school supplies for one child for a term") },
-    { min: 50, text: draft("provides a month of nutritious meals for one child") },
-    { min: 100, text: draft("covers a child's school fees for a month") },
-    { min: 250, text: draft("provides full monthly care for one child") },
-    { min: 500, text: draft("buys winter clothing and bedding for ten children") },
-  ],
   trust: [
     { icon: "lock", text: "Secure, encrypted checkout" },
     { icon: "receipt", text: "Instant email receipt" },
-    { icon: "heart", text: "Zakat directed to eligible children" },
+    { icon: "heart", text: "Every child in our care is Zakat eligible" },
   ] as const,
+  /** Bank details are never published. Donors ask for them instead. */
+  bankTransfer: "We share our bank details directly, not online. Call us or send a message and we'll send them to you.",
 };
 
 export const involved = {
@@ -345,33 +333,28 @@ export const involved = {
   cards: [
     { key: "volunteer", title: "Volunteer", body: "Teach a class, coach a sport or share a skill. All volunteers go through a background check before working with children.", cta: "Offer your time", href: "#contact" },
     { key: "meal", title: "Sponsor a meal", body: "Mark a birthday, an Eid, or the memory of a loved one by providing a meal for all of our children.", cta: "Book a meal day", href: "#contact" },
-    { key: "fundraise", title: "Start a fundraiser", body: "Turn a birthday, Ramadan challenge or a 5K into support for our children.", cta: "Start fundraising", href: "fundraiser" },
     // Employer matching programs only accept registered charities, so this card stays hidden until the EIN is set.
     { key: "match", title: "Double your gift", body: "Many US employers match charitable donations. Ask your HR team. It can double your impact at no cost to you.", cta: "Ask us for a match letter", href: "#contact", needsTaxExempt: true },
   ],
 };
 
 export const faq = [
-  {
-    q: "Is my donation tax deductible?",
-    a: (isTaxExempt
-      ? [taxExempt.note, " You'll receive an email receipt for your records. Our EIN is ", taxExempt.ein, "."]
-      : [
-          draft(
-            "Our nonprofit registration isn't complete yet, so we can't confirm tax deductibility at the moment. We'll update this page as soon as it is. Every gift still gets an email receipt.",
-          ),
-        ]) as Rich,
-  },
+  isTaxExempt
+    ? {
+        q: "Is my donation tax deductible?",
+        a: [taxExempt.note, " You'll receive an email receipt for your records. Our EIN is ", taxExempt.ein, "."] as Rich,
+      }
+    : {
+        q: "Are you a registered nonprofit?",
+        a: [taxExempt.pending, " We'll update this page as soon as it's approved."] as Rich,
+      },
   {
     q: "Can I give my Zakat to Fatima tuz Zahra?",
-    a: [
-      "Yes. Orphaned and needy children are among those eligible to receive Zakat. Choose Zakat when you give so it goes to the right place. ",
-      draft("[Describe how Zakat funds are handled, for example kept in a separate fund.]"),
-    ] as Rich,
+    a: ["Yes. Every child in our care is eligible for Zakat, so all of it is spent on the children. Choose Zakat when you give and we'll record it as Zakat."] as Rich,
   },
   {
     q: "How much of my donation reaches the children?",
-    a: ["All of it. 100% of your donation goes directly to the children, paying for their home, meals, schooling and health care."] as Rich,
+    a: ["All of it. 100% of what we receive is spent on the children: their home, meals, schooling and health care."] as Rich,
   },
   {
     q: "Can I sponsor a specific child?",
@@ -379,7 +362,7 @@ export const faq = [
   },
   {
     q: "Can I visit the home?",
-    a: ["Yes, visitors are welcome during visiting hours: ", contact.hours, ". Please call ahead so we can show you around."] as Rich,
+    a: ["Yes, visits are by appointment. Call us on ", contact.phone, " and we'll arrange a time to show you around."] as Rich,
   },
   {
     q: "How do you keep the children safe?",
@@ -389,19 +372,19 @@ export const faq = [
 
 /** Plain-language privacy notice (opens from the footer). Have it reviewed before launch. */
 export const privacy = {
-  updated: draft("[date]"),
+  updated: "October 17, 2026",
   sections: [
     {
       title: "What we collect",
-      body: [draft("When you contact us or join our newsletter, we collect what you give us: your name, email, phone number if you share it, and your message. We use it only to reply to you or send the updates you asked for.")] as Rich,
+      body: ["When you contact us or join our newsletter, we collect what you give us: your name, email, phone number if you share it, and your message. We use it only to reply to you or send the updates you asked for."] as Rich,
     },
     {
       title: "Donations",
-      body: [draft("Online donations are processed securely by our payment provider. We never see or store your full card details. We keep a record of each gift for receipts and our accounts.")] as Rich,
+      body: ["Online donations are processed securely by our payment provider. We never see or store your full card details. We keep a record of each gift for receipts and our accounts."] as Rich,
     },
     {
       title: "What we don't do",
-      body: [draft("We don't sell, rent or trade your information. This website doesn't use advertising or tracking cookies.")] as Rich,
+      body: ["We don't sell, rent or trade your information. This website doesn't use advertising or tracking cookies."] as Rich,
     },
     {
       title: "Children's privacy",

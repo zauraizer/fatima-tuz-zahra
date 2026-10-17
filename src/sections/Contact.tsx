@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { contact, forms, site } from "../content";
+import { contact, forms, phoneHref, type Text } from "../content";
 import { SectionHeading } from "../components/Bits";
 import { Magnetic } from "../components/Effects";
 import { Icon, type IconName } from "../components/Icon";
@@ -8,11 +8,10 @@ import { gsap, useGSAP } from "../lib/gsap";
 
 const TOPICS = ["Sponsor a child", "Zakat or Sadaqah", "Volunteer", "Visit", "Something else"];
 
-const INFO: { icon: IconName; label: string; value: typeof contact.email }[] = [
-  { icon: "pin", label: "Address", value: contact.address },
-  { icon: "phone", label: "Phone", value: contact.phone },
+const INFO: { icon: IconName; label: string; value: Text; href?: string }[] = [
+  { icon: "phone", label: "Phone", value: contact.phone, href: phoneHref },
   { icon: "mail", label: "Email", value: contact.email },
-  { icon: "clock", label: "Visiting hours", value: contact.hours },
+  { icon: "clock", label: "Visits", value: contact.hours },
 ];
 
 type Status = "idle" | "sending" | "sent" | "mailto" | "error";
@@ -109,7 +108,7 @@ export function Contact() {
           <SectionHeading
             eyebrow="Visit and contact"
             title="Come and meet our family"
-            lead="Visitors are always welcome during visiting hours. Please call ahead so we can show you around."
+            lead="Visitors are welcome by appointment. Call ahead and we'll arrange a time to show you around."
           />
           <ul className="mt-10 grid gap-5 sm:grid-cols-2">
             {INFO.map((item) => (
@@ -118,25 +117,22 @@ export function Contact() {
                 <div>
                   <p className="text-[0.72rem] font-bold tracking-[0.12em] text-ink-soft uppercase">{item.label}</p>
                   <p className="mt-0.5 font-semibold">
-                    <T v={item.value} />
+                    {item.href ? (
+                      <a href={item.href} className="underline-offset-4 hover:underline">
+                        <T v={item.value} />
+                      </a>
+                    ) : (
+                      <T v={item.value} />
+                    )}
                   </p>
                 </div>
               </li>
             ))}
           </ul>
 
-          {/* The empty "map goes here" box only shows in draft mode. */}
-          {(contact.mapEmbed || site.draftMode) && (
-            <div data-reveal="clip" className="mt-10 aspect-[16/8] overflow-hidden rounded-3xl border-2 border-dashed border-line bg-sand">
-              {contact.mapEmbed ? (
-                <iframe title="Map to the home" src={contact.mapEmbed} className="size-full border-0" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" />
-              ) : (
-                <div data-reveal-inner className="relative grid size-full place-content-center justify-items-center gap-2 text-sm text-ink-soft">
-                  <div className="bg-stars absolute inset-0 opacity-15" />
-                  <Icon name="map" className="relative size-9 text-gold" />
-                  <p className="relative">Map of the home goes here</p>
-                </div>
-              )}
+          {contact.mapEmbed && (
+            <div data-reveal="clip" className="mt-10 aspect-[16/8] overflow-hidden rounded-3xl bg-sand">
+              <iframe title="Map to the home" src={contact.mapEmbed} className="size-full border-0" loading="lazy" referrerPolicy="strict-origin-when-cross-origin" />
             </div>
           )}
         </div>

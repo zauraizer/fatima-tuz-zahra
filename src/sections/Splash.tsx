@@ -74,7 +74,7 @@ export function Splash() {
 
   const words = site.name.split(" ");
   return (
-    <section ref={root} id="splash" aria-label={`${site.name} ${site.kind}`} className="relative isolate h-svh overflow-hidden bg-forest-deep text-cream">
+    <section ref={root} id="splash" aria-label={site.fullName} className="relative isolate h-svh overflow-hidden bg-forest-deep text-cream">
       <div className="splash-pattern bg-stars-light absolute -inset-y-[15%] inset-x-0 opacity-[0.07]" />
       <div className="pointer-events-none absolute top-1/2 left-1/2 aspect-square w-[90vmax] -translate-1/2 bg-[radial-gradient(closest-side,rgb(232_176_74/0.16),transparent_70%)]" />
       <Lanterns className="absolute inset-0 size-full opacity-70" count={30} />

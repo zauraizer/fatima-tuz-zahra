@@ -5,7 +5,7 @@ import { useToast } from "../components/Toast";
 import { linkMissing, textOf } from "../lib/draft";
 import { SpotlightCard } from "./Care";
 
-const CARD_ICONS: Record<string, IconName> = { volunteer: "users", meal: "meal", fundraise: "flag", match: "briefcase" };
+const CARD_ICONS: Record<string, IconName> = { volunteer: "users", meal: "meal", match: "briefcase" };
 
 // Column counts for the cards, with the share banner spanning a full row, so the grid never has gaps.
 const LAYOUT: Record<number, { grid: string; banner: string }> = {
@@ -20,7 +20,7 @@ export function Involved() {
   const layout = LAYOUT[cards.length] ?? LAYOUT[4];
 
   const share = async () => {
-    const data = { title: `${site.name} ${site.kind}`, text: site.tagline, url: window.location.href.split("#")[0] };
+    const data = { title: site.fullName, text: site.tagline, url: window.location.href.split("#")[0] };
     if (navigator.share) {
       try {
         await navigator.share(data);

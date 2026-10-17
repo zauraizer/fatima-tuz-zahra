@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { contact, nav } from "../content";
-import { textOf } from "../lib/draft";
+import { contact, nav, phoneHref } from "../content";
+import { T } from "../lib/draft";
 import { gsap, ScrollTrigger, useGSAP } from "../lib/gsap";
 import { useMedia, useReducedMotion } from "../lib/hooks";
 import { Brand } from "./Brand";
@@ -243,8 +243,12 @@ export function Header() {
             </a>
           </div>
           <div className="menu-item mt-auto pt-10 text-sm text-cream/70">
-            <p>{textOf(contact.email)}</p>
-            <p>{textOf(contact.phone)}</p>
+            <p>
+              <T v={contact.email} />
+            </p>
+            <a href={phoneHref} className="hover:text-gold-soft">
+              {contact.phone}
+            </a>
           </div>
         </div>
       </div>

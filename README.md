@@ -1,4 +1,4 @@
-# Fatima tuz Zahra Orphanage — website
+# Fatima tuz Zahra, Bait ul Khair — website
 
 Vite + React 19 + TypeScript + **Tailwind CSS v4**, with **GSAP** (ScrollTrigger,
 SplitText) and **Lenis** smooth scrolling. Fonts are self-hosted (Lora, Plus
@@ -47,12 +47,11 @@ The originals in `photos/` are never committed; only the cleaned copies are.
 | Setting | What it's for |
 | --- | --- |
 | `links.donate` | Your online donation page (Givebutter, Donorbox, Zeffy…). The big **Give** button opens it. |
-| `links.amazonWishlist`, `links.fundraiser` | Wish list and peer-to-peer fundraiser pages. |
+| `links.instagram`, `links.facebook`, `links.youtube` | Footer icons. An empty one is hidden. |
 | `forms.contactEndpoint` | A Formspree/Basin URL. If it's empty, the form opens the visitor's email app. |
-| `forms.newsletterEndpoint` | Mailchimp/Buttondown etc. If it's empty, the newsletter form is hidden once draft mode is off. |
-| `contact.mapEmbed` | Google Maps → Share → Embed → copy just the `src` URL. |
-| `give.impact` | What each donation amount provides. Replace with your real costs. |
-| `taxExempt.ein` | **Leave empty until registration is complete.** Once it's filled in, the EIN and the tax-deductible wording appear in the donate panel, footer and FAQ. |
+| `forms.newsletterEndpoint` | Mailchimp/Buttondown etc. If it's empty, the newsletter form is hidden. |
+| `contact.mapEmbed` | Google Maps → Share → Embed → copy just the `src` URL. Empty means no map. The street address is kept off the site on purpose. |
+| `taxExempt.ein` | **Leave empty until registration is complete.** Until then those places say the 501(c)(3) registration is in progress. Once it's filled in, the EIN and the tax-deductible wording appear in the donate panel, footer and FAQ instead. |
 | `privacy` | The plain-language privacy notice (footer → Privacy). Have it reviewed. |
 
 ## Layout
