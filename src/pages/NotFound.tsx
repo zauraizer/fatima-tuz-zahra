@@ -1,5 +1,5 @@
 import { site } from "../content";
-import { Emblem } from "../components/Brand";
+import { Emblem, LogoMark } from "../components/Brand";
 import { Icon } from "../components/Icon";
 
 /*
@@ -14,7 +14,7 @@ export function NotFound() {
 
       <div className="relative flex max-w-xl flex-col items-center">
         <a href="/" className="inline-flex items-center gap-3 text-cream transition-colors hover:text-gold-soft">
-          <Emblem light className="size-10" />
+          <LogoMark className="h-12 w-auto" />
           <span className="font-display text-xl font-semibold">{site.name}</span>
         </a>
 

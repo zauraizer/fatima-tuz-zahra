@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { story } from "../content";
 import { SectionHeading } from "../components/Bits";
-import { Emblem } from "../components/Brand";
+import { LogoMark } from "../components/Brand";
 import { Photo } from "../components/Photo";
 import { RichText } from "../lib/draft";
 import { gsap, prefersReducedMotion, useGSAP } from "../lib/gsap";
@@ -60,7 +60,7 @@ export function Story() {
               </text>
             </svg>
             <div className="absolute inset-0 m-auto grid size-15 place-items-center rounded-full bg-forest md:size-16">
-              <Emblem light className="size-9" />
+              <LogoMark className="h-10 w-auto" />
             </div>
           </div>
         </div>

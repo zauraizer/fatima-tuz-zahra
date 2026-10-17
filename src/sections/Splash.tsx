@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { site } from "../content";
+import { Logo, logoUrl } from "../components/Brand";
 import { Lanterns } from "../components/Effects";
 import { Icon } from "../components/Icon";
 import { scrollToTarget, useLenis } from "../components/SmoothScroll";
@@ -27,13 +28,18 @@ export function Splash() {
       // Entrance (plays on every load)
       gsap
         .timeline({ delay: 0.15 })
-        .fromTo(q(".splash-stroke"), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.1, ease: "power2.inOut", stagger: 0.08 })
-        .to(q(".splash-fill"), { opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.35")
-        .to(q(".splash-spin"), { rotate: 45, duration: 1.3, ease: "expo.inOut" }, "<")
-        .from(q(".splash-word"), { yPercent: 120, duration: 1, stagger: 0.06 }, 0.3)
-        .from(q(".splash-ar"), { autoAlpha: 0, y: 14, filter: "blur(6px)", duration: 0.9 }, 0.6)
+        .from(q(".splash-logo"), { opacity: 0, y: 26, scale: 0.94, filter: "blur(14px)", duration: 1.6, ease: "expo.out", clearProps: "filter" })
+        .fromTo(q(".splash-shine"), { backgroundPosition: "160% 0" }, { backgroundPosition: "-60% 0", duration: 1.8, ease: "power2.inOut" }, 0.7)
+        .from(q(".splash-word"), { yPercent: 120, duration: 1, stagger: 0.06 }, 0.5)
         .from(q(".splash-tag"), { autoAlpha: 0, y: 12, duration: 0.8 }, 0.9)
         .from(q(".splash-cue"), { opacity: 0, y: 18, duration: 0.9 }, 1.3);
+
+      // A glint of light passes over the gold every few seconds while the splash is open.
+      gsap.fromTo(
+        q(".splash-shine"),
+        { backgroundPosition: "160% 0" },
+        { backgroundPosition: "-60% 0", duration: 1.8, ease: "power2.inOut", repeat: -1, repeatDelay: 5, delay: 7 },
+      );
 
       // Scrolling out. The hero starts animating once the splash is ~40% gone.
       const curve = { r: 0 };
@@ -73,27 +79,37 @@ export function Splash() {
       <div className="pointer-events-none absolute top-1/2 left-1/2 aspect-square w-[90vmax] -translate-1/2 bg-[radial-gradient(closest-side,rgb(232_176_74/0.16),transparent_70%)]" />
       <Lanterns className="absolute inset-0 size-full opacity-70" count={30} />
 
-      <div className="splash-inner absolute inset-0 grid place-items-center px-5">
+      <div className="splash-inner absolute inset-0 grid place-items-center px-5 pb-[clamp(5rem,16svh,9rem)]">
         <div className="flex flex-col items-center text-center">
-          <svg viewBox="0 0 120 120" className="splash-spin size-28 md:size-36" aria-hidden="true">
-            <g fill="none" stroke="var(--color-gold)" strokeWidth="2">
-              <rect className="splash-stroke" pathLength={1} strokeDasharray="1" x="27" y="27" width="66" height="66" rx="8" />
-              <rect className="splash-stroke" pathLength={1} strokeDasharray="1" x="27" y="27" width="66" height="66" rx="8" transform="rotate(45 60 60)" />
-              <circle className="splash-stroke" pathLength={1} strokeDasharray="1" cx="60" cy="60" r="22" />
-            </g>
-            <circle className="splash-fill" cx="60" cy="60" r="10" fill="var(--color-gold)" opacity="0" />
-          </svg>
-          <p className="mt-8 flex flex-wrap justify-center gap-x-[0.3em] overflow-hidden font-display text-[clamp(2.6rem,6vw+1rem,5.5rem)] leading-[1.1] font-semibold">
+          {/* The logo, with a band of light masked to its letters for the glint */}
+          <div className="splash-logo relative aspect-[512/822] h-[clamp(6.5rem,38svh,23rem)]">
+            <Logo className="size-full object-contain drop-shadow-[0_10px_40px_rgb(0_0_0/0.35)]" />
+            <div
+              aria-hidden="true"
+              className="splash-shine pointer-events-none absolute inset-0"
+              style={{
+                WebkitMaskImage: `url(${logoUrl})`,
+                maskImage: `url(${logoUrl})`,
+                WebkitMaskSize: "contain",
+                maskSize: "contain",
+                WebkitMaskRepeat: "no-repeat",
+                maskRepeat: "no-repeat",
+                WebkitMaskPosition: "center",
+                maskPosition: "center",
+                backgroundImage: "linear-gradient(105deg, transparent 38%, rgb(255 248 220 / 0.9) 50%, transparent 62%)",
+                backgroundSize: "260% 100%",
+                backgroundPosition: "160% 0",
+              }}
+            />
+          </div>
+          <p className="mt-[min(1.5rem,3svh)] flex flex-wrap justify-center gap-x-[0.3em] overflow-hidden font-display text-[clamp(1.8rem,min(4vw+1rem,7.5svh),4.2rem)] leading-[1.1] font-semibold">
             {words.map((w) => (
               <span key={w} className="splash-word inline-block">
                 {w}
               </span>
             ))}
           </p>
-          <p className="splash-ar mt-3 text-[clamp(1.9rem,3vw+1rem,3rem)] text-gold-soft" lang="ar" dir="rtl">
-            {site.nameArabic}
-          </p>
-          <p className="splash-tag mt-6 max-w-sm text-[0.95rem] text-cream/70">{site.tagline}</p>
+          <p className="splash-tag mt-4 max-w-sm text-[0.95rem] text-cream/70 [@media(max-height:520px)]:hidden">{site.tagline}</p>
         </div>
       </div>
 

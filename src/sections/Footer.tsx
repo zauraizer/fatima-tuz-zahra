@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { contact, footer, forms, isTaxExempt, links, nav, site, taxExempt } from "../content";
-import { Emblem } from "../components/Brand";
+import { LogoMark } from "../components/Brand";
 import { Icon } from "../components/Icon";
 import { useScrollTo } from "../components/SmoothScroll";
 import { useToast } from "../components/Toast";
@@ -43,7 +43,7 @@ export function Footer({ openPrivacy }: { openPrivacy: () => void }) {
         <div className="mt-20 grid gap-12 border-t border-cream/10 pt-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
             <a href="#top" className="inline-flex items-center gap-3 text-cream">
-              <Emblem light className="size-11" />
+              <LogoMark className="h-14 w-auto" />
               <span className="font-display text-xl font-semibold">{site.name}</span>
             </a>
             <p className="mt-5 max-w-xs leading-relaxed">{site.tagline}</p>

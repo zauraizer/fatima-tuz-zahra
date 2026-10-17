@@ -1,5 +1,6 @@
 import { useRef } from "react";
-import { hero, site } from "../content";
+import { hero } from "../content";
+import { Logo } from "../components/Brand";
 import { Lanterns, Magnetic } from "../components/Effects";
 import { Icon } from "../components/Icon";
 import { RichText } from "../lib/draft";
@@ -26,8 +27,7 @@ export function Hero() {
       gsap.set(q(".hero-fade"), { opacity: 0, y: 26 });
       gsap.set(q(".hero-arch"), { clipPath: "inset(100% 0% 0% 0%)" });
       gsap.set(q(".hero-back"), { autoAlpha: 0, scale: 0.92, rotate: -4 });
-      gsap.set(q(".hero-ar"), { autoAlpha: 0, y: 18, filter: "blur(8px)" });
-      gsap.set(q(".hero-star"), { autoAlpha: 0, scale: 0.6 });
+      gsap.set(q(".hero-logo"), { autoAlpha: 0, y: 18, scale: 0.94, filter: "blur(10px)" });
       gsap.set(q(".hero-card"), { autoAlpha: 0, scale: 0.85, y: 24 });
       gsap.set(q(".hero-cue"), { opacity: 0 });
 
@@ -62,8 +62,7 @@ export function Hero() {
           .to(q(".hero-fade"), { opacity: 1, y: 0, duration: 1.2, stagger: 0.09 }, 0.3)
           .to(q(".hero-arch"), { clipPath: "inset(0% 0% 0% 0%)", duration: 1.7, ease: "expo.inOut" }, 0)
           .to(q(".hero-back"), { autoAlpha: 1, scale: 1, rotate: 0, duration: 1.6 }, 0.35)
-          .to(q(".hero-star"), { autoAlpha: 1, scale: 1, duration: 1.6 }, 0.9)
-          .to(q(".hero-ar"), { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 1.3 }, 1.0)
+          .to(q(".hero-logo"), { autoAlpha: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 1.5, clearProps: "filter" }, 0.85)
           .to(q(".hero-card"), { autoAlpha: 1, scale: 1, y: 0, duration: 1.1, ease: "back.out(1.6)", stagger: 0.16 }, 1.15)
           .to(q(".hero-cue"), { opacity: 1, duration: 1 }, 1.6);
       });
@@ -163,24 +162,11 @@ export function Hero() {
 
           <div data-depth="0.7" className="hero-arch arch absolute top-0 right-[6%] bottom-0 left-0 overflow-hidden bg-forest shadow-lift">
             <div className="hero-pattern bg-stars absolute -inset-[20%] opacity-[0.2]" />
-            <div className="absolute top-[34%] left-1/2 aspect-square w-[115%] -translate-1/2 bg-[radial-gradient(closest-side,rgb(214_164_78/0.5),rgb(200_147_58/0.12)_55%,transparent)]" />
+            <div className="absolute top-[46%] left-1/2 aspect-square w-[115%] -translate-1/2 bg-[radial-gradient(closest-side,rgb(214_164_78/0.42),rgb(200_147_58/0.1)_55%,transparent)]" />
             <Lanterns className="absolute inset-0 size-full" />
-            <div className="hero-star absolute top-[34%] left-1/2 w-[46%] -translate-1/2">
-              <svg viewBox="0 0 120 120" className="w-full animate-spin-slow">
-                <g fill="none" stroke="var(--color-gold-soft)" strokeWidth="1.6">
-                  <rect x="27" y="27" width="66" height="66" rx="6" />
-                  <rect x="27" y="27" width="66" height="66" rx="6" transform="rotate(45 60 60)" />
-                  <circle cx="60" cy="60" r="22" />
-                </g>
-                <circle cx="60" cy="60" r="9" fill="var(--color-gold)" />
-              </svg>
-            </div>
             <div className="arch absolute inset-3.5 border-[1.5px] border-gold/70" />
-            <div className="hero-ar absolute inset-x-0 bottom-[14%] px-6 text-center">
-              <p lang="ar" dir="rtl" className="text-[clamp(2.5rem,5vw,3.6rem)] leading-normal text-cream">
-                {site.nameArabic}
-              </p>
-              <p className="mt-1 text-[0.72rem] font-semibold tracking-[0.3em] text-gold-soft uppercase">{site.name}</p>
+            <div className="hero-logo absolute inset-x-[16%] top-[13%] bottom-[11%]">
+              <Logo alt="" className="absolute inset-0 size-full object-contain drop-shadow-[0_8px_30px_rgb(0_0_0/0.35)]" />
             </div>
           </div>
 
